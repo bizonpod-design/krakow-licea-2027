@@ -958,7 +958,7 @@ function createCard(s) {
 
   const websiteLink = s.website ? `<a href="${s.website}" target="_blank">${t('officialSite')}</a>` : `<span style="color:#aaa">${t('noSite')}</span>`;
 
-  return `<div class="card" data-id="${s.id}" data-specs="${s.specs.join(',')}" data-district="${s.district}" data-type="${s.type}" data-ib="${s.hasIB}" data-top10="${s.top10 || 0}" data-threshold="${s.threshold_max || 999}">
+  return `<div class="card" data-id="${s.id}" data-specs="${s.specs.join(',')}" data-district="${s.district}" data-type="${s.type}" data-ib="${s.hasIB}" data-top10="${s.top10 || 0}" data-threshold="${s.threshold_max || 999}" data-search="${schoolSearchKey(s)}">
     <div class="card-header ${tierClass}">
       <div class="school-name">${s.name}</div>
       <div class="school-sub">${s.address} &nbsp;&middot;&nbsp; ${getDistLabelCard(s)}</div>
@@ -1022,6 +1022,7 @@ function applyFilters() {
   const maxScore = parseInt(document.getElementById('score-slider').value);
   const onlyTop10 = document.getElementById('filter-top10').checked;
   const onlyIB = document.getElementById('filter-ib').checked;
+  const query = norm(document.getElementById('search-box').value);
 
   let visible = 0;
   document.querySelectorAll('.card').forEach(card => {
@@ -1038,8 +1039,9 @@ function applyFilters() {
     const scoreMatch = threshold <= maxScore || threshold === 999;
     const top10Match = !onlyTop10 || top10 > 0;
     const ibMatch = !onlyIB || ib;
+    const searchMatch = !query || (card.dataset.search || '').indexOf(query) !== -1;
 
-    if (specMatch && districtMatch && typeMatch && scoreMatch && top10Match && ibMatch) {
+    if (specMatch && districtMatch && typeMatch && scoreMatch && top10Match && ibMatch && searchMatch) {
       card.classList.remove('hidden');
       visible++;
     } else {
@@ -1057,12 +1059,16 @@ function resetFilters() {
   document.getElementById('score-display').textContent = t('scoreAny');
   document.getElementById('filter-top10').checked = false;
   document.getElementById('filter-ib').checked = false;
+  document.getElementById('search-box').value = '';
   applyFilters();
 }
 
 function applyTranslations() {
   document.querySelectorAll('[data-i18n]').forEach(el => {
     el.textContent = t(el.dataset.i18n);
+  });
+  document.querySelectorAll('[data-i18n-ph]').forEach(el => {
+    el.placeholder = t(el.dataset.i18nPh);
   });
 }
 
@@ -1092,6 +1098,8 @@ document.getElementById('score-slider').addEventListener('input', function() {
 });
 
 document.querySelectorAll('input[type="checkbox"]').forEach(c => c.addEventListener('change', applyFilters));
+
+document.getElementById('search-box').addEventListener('input', applyFilters);
 
 setLanguage(currentLang);
 </script>
