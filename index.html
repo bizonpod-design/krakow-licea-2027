@@ -1,0 +1,1099 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Krakow Liceums Guide 2027</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f4f6f9; color: #222; }
+  header { background: #1a237e; color: white; padding: 20px 30px; }
+  header h1 { font-size: 1.6rem; margin-bottom: 4px; }
+  header p { font-size: 0.9rem; opacity: 0.8; }
+  .lang-switcher { display: flex; gap: 5px; margin-top: 10px; }
+  .lang-btn { padding: 3px 11px; border: 1px solid rgba(255,255,255,0.45); border-radius: 4px; background: transparent; color: white; cursor: pointer; font-size: 0.82rem; font-weight: 700; letter-spacing: 0.04em; transition: background 0.15s; }
+  .lang-btn:hover { background: rgba(255,255,255,0.15); }
+  .lang-btn.active { background: rgba(255,255,255,0.28); border-color: white; }
+  .layout { display: flex; min-height: calc(100vh - 80px); }
+  .sidebar { width: 280px; min-width: 280px; background: white; padding: 20px; border-right: 1px solid #ddd; overflow-y: auto; }
+  .main { flex: 1; padding: 20px; overflow-y: auto; }
+  .sidebar h3 { font-size: 0.85rem; text-transform: uppercase; color: #666; letter-spacing: 0.05em; margin: 16px 0 8px; border-top: 1px solid #eee; padding-top: 12px; }
+  .sidebar h3:first-child { border-top: none; padding-top: 0; margin-top: 0; }
+  .filter-group label { display: flex; align-items: center; gap: 8px; margin: 5px 0; font-size: 0.9rem; cursor: pointer; }
+  .filter-group label:hover { color: #1a237e; }
+  input[type="checkbox"] { width: 15px; height: 15px; cursor: pointer; accent-color: #1a237e; }
+  .score-filter { padding: 6px 0; }
+  .score-filter label { font-size: 0.85rem; color: #555; }
+  input[type="range"] { width: 100%; margin: 6px 0; accent-color: #1a237e; }
+  .score-display { font-size: 0.85rem; color: #1a237e; font-weight: 600; text-align: center; }
+  .reset-btn { width: 100%; padding: 10px; margin-top: 16px; background: #e8eaf6; color: #1a237e; border: 1px solid #c5cae9; border-radius: 6px; cursor: pointer; font-size: 0.9rem; font-weight: 600; }
+  .reset-btn:hover { background: #c5cae9; }
+  .search-filter { margin-bottom: 4px; }
+  #search-box { width: 100%; padding: 8px 10px; border: 1px solid #c5cae9; border-radius: 6px; font-size: 0.9rem; }
+  #search-box:focus { outline: none; border-color: #1a237e; box-shadow: 0 0 0 2px #e8eaf6; }
+  .stats-bar { background: white; border-bottom: 1px solid #ddd; padding: 12px 20px; font-size: 0.9rem; color: #555; }
+  .stats-bar span { color: #1a237e; font-weight: 700; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 16px; }
+  .card { background: white; border-radius: 10px; border: 1px solid #e0e0e0; overflow: hidden; transition: box-shadow 0.2s, transform 0.1s; }
+  .card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.12); transform: translateY(-2px); }
+  .card.hidden { display: none; }
+  .card-header { padding: 14px 16px 10px; border-bottom: 3px solid #e8eaf6; }
+  .card-header.tier-elite { border-bottom-color: #c62828; }
+  .card-header.tier-top { border-bottom-color: #1565c0; }
+  .card-header.tier-strong { border-bottom-color: #2e7d32; }
+  .card-header.tier-mid-upper { border-bottom-color: #f57f17; }
+  .card-header.tier-mid { border-bottom-color: #78909c; }
+  .card-header.tier-sport { border-bottom-color: #6a1b9a; }
+  .school-name { font-size: 1rem; font-weight: 700; color: #1a237e; line-height: 1.3; }
+  .school-sub { font-size: 0.8rem; color: #777; margin-top: 2px; }
+  .badges { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 8px; }
+  .badge { font-size: 0.72rem; padding: 2px 8px; border-radius: 20px; font-weight: 600; white-space: nowrap; }
+  .badge-rank { background: #e8eaf6; color: #1a237e; }
+  .badge-ib { background: #fff8e1; color: #e65100; }
+  .badge-private { background: #fce4ec; color: #880e4f; }
+  .badge-sport { background: #f3e5f5; color: #6a1b9a; }
+  .badge-music { background: #e0f2f1; color: #00695c; }
+  .card-body { padding: 12px 16px; }
+  .info-row { display: flex; justify-content: space-between; font-size: 0.83rem; margin: 4px 0; }
+  .info-label { color: #777; }
+  .info-val { font-weight: 600; color: #333; }
+  .score-bar-wrap { margin: 10px 0; }
+  .score-bar-label { display: flex; justify-content: space-between; font-size: 0.78rem; color: #888; margin-bottom: 3px; }
+  .score-bar { height: 8px; background: #f0f0f0; border-radius: 4px; overflow: hidden; }
+  .score-bar-fill { height: 100%; border-radius: 4px; }
+  .tier-elite .score-bar-fill { background: linear-gradient(90deg, #c62828, #ef5350); }
+  .tier-top .score-bar-fill { background: linear-gradient(90deg, #1565c0, #42a5f5); }
+  .tier-strong .score-bar-fill { background: linear-gradient(90deg, #2e7d32, #66bb6a); }
+  .tier-mid-upper .score-bar-fill { background: linear-gradient(90deg, #f57f17, #ffca28); }
+  .tier-mid .score-bar-fill { background: linear-gradient(90deg, #546e7a, #90a4ae); }
+  .profiles-section { margin-top: 10px; }
+  .profiles-section summary { font-size: 0.82rem; color: #555; cursor: pointer; padding: 4px 0; }
+  .profiles-section summary:hover { color: #1a237e; }
+  .profile-list { margin-top: 6px; }
+  .profile-item { display: flex; align-items: baseline; gap: 6px; font-size: 0.8rem; margin: 3px 0; padding: 3px 6px; background: #f8f8ff; border-radius: 4px; border-left: 3px solid #e8eaf6; }
+  .profile-name { font-weight: 600; color: #333; flex-shrink: 0; }
+  .profile-subjects { color: #666; }
+  .pros-cons { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
+  .pros, .cons { font-size: 0.78rem; }
+  .pros strong, .cons strong { display: block; margin-bottom: 3px; }
+  .pros strong { color: #2e7d32; }
+  .cons strong { color: #c62828; }
+  .pros li, .cons li { margin: 2px 0 2px 12px; color: #555; }
+  .sentiment { display: inline-block; font-size: 0.78rem; font-weight: 700; padding: 2px 10px; border-radius: 20px; margin-top: 8px; }
+  .sentiment-positive { background: #e8f5e9; color: #2e7d32; }
+  .sentiment-mixed { background: #fff8e1; color: #f57f17; }
+  .sentiment-negative { background: #ffebee; color: #c62828; }
+  .card-footer { padding: 8px 16px; background: #fafafa; border-top: 1px solid #f0f0f0; display: flex; justify-content: space-between; align-items: center; }
+  .card-footer a { font-size: 0.8rem; color: #1a237e; text-decoration: none; }
+  .card-footer a:hover { text-decoration: underline; }
+  .rec-badge { font-size: 0.75rem; font-weight: 700; padding: 3px 10px; border-radius: 20px; }
+  .rec-1 { background: #c62828; color: white; }
+  .rec-2 { background: #1565c0; color: white; }
+  .rec-3 { background: #2e7d32; color: white; }
+  .rec-other { background: #e0e0e0; color: #555; }
+  .no-results { text-align: center; padding: 60px; color: #999; font-size: 1.1rem; }
+  @media (max-width: 700px) {
+    .layout { flex-direction: column; }
+    .sidebar { width: 100%; border-right: none; border-bottom: 1px solid #ddd; }
+    .grid { grid-template-columns: 1fr; }
+    .pros-cons { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1 id="hdr-title">Krakow Liceums Guide 2027</h1>
+  <p id="hdr-sub">Choosing a high school (liceum) in Krakow &nbsp;|&nbsp; 8th-class exams: April 2027 &nbsp;|&nbsp; Data: Perspektywy 2025/2026 + official thresholds</p>
+  <div class="lang-switcher">
+    <button class="lang-btn active" data-lang="en" onclick="setLanguage('en')">EN</button>
+    <button class="lang-btn" data-lang="pl" onclick="setLanguage('pl')">PL</button>
+    <button class="lang-btn" data-lang="ua" onclick="setLanguage('ua')">UA</button>
+    <button class="lang-btn" data-lang="ru" onclick="setLanguage('ru')">RU</button>
+  </div>
+</header>
+
+<div class="layout">
+<aside class="sidebar">
+  <h3 data-i18n="sidebarSearch">Search by name / number</h3>
+  <div class="search-filter">
+    <input type="text" id="search-box" data-i18n-ph="searchPlaceholder" placeholder="e.g. V, 5, Witkowski, Sobieski…" autocomplete="off">
+  </div>
+
+  <h3 data-i18n="sidebarSpec">Specialization</h3>
+  <div class="filter-group" id="spec-filters">
+    <label><input type="checkbox" class="filter-spec" value="math" checked> <span data-i18n="spec_math">Mathematics / Physics</span></label>
+    <label><input type="checkbox" class="filter-spec" value="bio" checked> <span data-i18n="spec_bio">Biology / Chemistry (pre-med)</span></label>
+    <label><input type="checkbox" class="filter-spec" value="languages" checked> <span data-i18n="spec_languages">Languages / Humanities</span></label>
+    <label><input type="checkbox" class="filter-spec" value="it" checked> <span data-i18n="spec_it">IT / Algorithmics</span></label>
+    <label><input type="checkbox" class="filter-spec" value="ib" checked> <span data-i18n="spec_ib">IB (International Baccalaureate)</span></label>
+    <label><input type="checkbox" class="filter-spec" value="economics" checked> <span data-i18n="spec_economics">Economics</span></label>
+    <label><input type="checkbox" class="filter-spec" value="sport" checked> <span data-i18n="spec_sport">Sport</span></label>
+    <label><input type="checkbox" class="filter-spec" value="art" checked> <span data-i18n="spec_art">Art / Music</span></label>
+    <label><input type="checkbox" class="filter-spec" value="general" checked> <span data-i18n="spec_general">General</span></label>
+  </div>
+
+  <h3 data-i18n="sidebarDistrict">City District</h3>
+  <div class="filter-group" id="district-filters">
+    <label><input type="checkbox" class="filter-district" value="centrum" checked> <span data-i18n="dist_centrum">City Centre (Stare Miasto / Śródmieście)</span></label>
+    <label><input type="checkbox" class="filter-district" value="grzegorzki" checked> <span data-i18n="dist_grzegorzki">Grzegórzki</span></label>
+    <label><input type="checkbox" class="filter-district" value="krowodrza" checked> <span data-i18n="dist_krowodrza">Krowodrza</span></label>
+    <label><input type="checkbox" class="filter-district" value="podgorze" checked> <span data-i18n="dist_podgorze">Podgórze (South)</span></label>
+    <label><input type="checkbox" class="filter-district" value="nowa_huta" checked> <span data-i18n="dist_nowa_huta">Nowa Huta / Bieńczyce (East)</span></label>
+    <label><input type="checkbox" class="filter-district" value="bronowice" checked> <span data-i18n="dist_bronowice">Bronowice / North</span></label>
+    <label><input type="checkbox" class="filter-district" value="pradnik" checked> <span data-i18n="dist_pradnik">Prądnik / Other</span></label>
+  </div>
+
+  <h3 data-i18n="sidebarScore">Minimum Score Threshold</h3>
+  <div class="score-filter">
+    <label data-i18n="scoreLabel">Show schools where max threshold ≤</label>
+    <input type="range" id="score-slider" min="80" max="190" value="190" step="5">
+    <div class="score-display" id="score-display">Any (up to 190 pts)</div>
+  </div>
+
+  <h3 data-i18n="sidebarType">School Type</h3>
+  <div class="filter-group">
+    <label><input type="checkbox" class="filter-type" value="public" checked> <span data-i18n="type_public">Public (free)</span></label>
+    <label><input type="checkbox" class="filter-type" value="private" checked> <span data-i18n="type_private">Private (fee-paying)</span></label>
+    <label><input type="checkbox" class="filter-type" value="religious" checked> <span data-i18n="type_religious">Catholic / Religious</span></label>
+  </div>
+
+  <h3 data-i18n="sidebarShowOnly">Show Only</h3>
+  <div class="filter-group">
+    <label><input type="checkbox" id="filter-top10"> <span data-i18n="filterTop10">Top 10 recommendations only</span></label>
+    <label><input type="checkbox" id="filter-ib"> <span data-i18n="filterIB">Has IB program</span></label>
+  </div>
+
+  <button class="reset-btn" data-i18n="resetBtn" onclick="resetFilters()">Reset All Filters</button>
+</aside>
+
+<div style="flex:1; display:flex; flex-direction:column;">
+  <div class="stats-bar" id="stats-bar">
+    <span data-i18n="showingBefore">Showing </span><span id="count">0</span><span data-i18n="showingAfter"> schools</span>
+  </div>
+  <div class="main">
+    <div class="grid" id="card-grid"></div>
+    <div class="no-results hidden" id="no-results" data-i18n="noResults">No schools match the current filters.</div>
+  </div>
+</div>
+</div>
+
+<script>
+const i18n = {
+  en: {
+    pageTitle: "Krakow Liceums Guide 2027",
+    title: "Krakow Liceums Guide 2027",
+    subtitle: "Choosing a high school (liceum) in Krakow  |  Exams: April 2027  |  Data: Perspektywy 2025/2026 + official thresholds",
+    sidebarSearch: "Search by name / number", searchPlaceholder: "e.g. V, 5, Witkowski, Sobieski…",
+    sidebarSpec: "Specialization",
+    spec_math: "Mathematics / Physics", spec_bio: "Biology / Chemistry (pre-med)",
+    spec_languages: "Languages / Humanities", spec_it: "IT / Algorithmics",
+    spec_ib: "IB (International Baccalaureate)", spec_economics: "Economics",
+    spec_sport: "Sport", spec_art: "Art / Music", spec_general: "General",
+    sidebarDistrict: "City District",
+    dist_centrum: "City Centre (Stare Miasto / Śródmieście)", dist_grzegorzki: "Grzegórzki",
+    dist_krowodrza: "Krowodrza", dist_podgorze: "Podgórze (South)",
+    dist_nowa_huta: "Nowa Huta / Bieńczyce (East)", dist_bronowice: "Bronowice / North",
+    dist_pradnik: "Prądnik / Other",
+    sidebarScore: "Minimum Score Threshold",
+    scoreLabel: "Show schools where max threshold ≤",
+    scoreAny: "Any (up to 190 pts)", pts: "pts",
+    sidebarType: "School Type",
+    type_public: "Public (free)", type_private: "Private (fee-paying)", type_religious: "Catholic / Religious",
+    sidebarShowOnly: "Show Only",
+    filterTop10: "Top 10 recommendations only", filterIB: "Has IB program",
+    resetBtn: "Reset All Filters",
+    showingBefore: "Showing ", showingAfter: " schools",
+    cardThreshold: "Admission threshold (2025/26)", cardLocalRank: "Local rank 2024 / 2025",
+    cardMatura: "Matura pass rate", cardMathAvg: "Math avg (2025)", cardEngAvg: "English avg (2025)",
+    minPts: "Min pts", maxPts: "Max pts", classProfiles: "Class profiles",
+    pros: "✅ Pros", cons: "❌ Cons",
+    sentiment_positive: "✅ Positive reviews", sentiment_mixed: "⚠️ Mixed reviews", sentiment_negative: "❌ Negative trend",
+    rec1: "⭐ #1 Recommended", rec2: "🏆 #2 Choice", rec3: "🥇 #3 Choice", recOther: "#N Pick",
+    badge_private: "Private", badge_catholic: "Catholic",
+    officialSite: "Official website ↗", noSite: "No website link",
+    noResults: "No schools match the current filters.",
+    sportTest: "Sport test / n/a", ownRecruitment: "Own recruitment / not published",
+    distLabel: { centrum: "Stare Miasto", grzegorzki: "Grzegórzki", krowodrza: "Krowodrza", podgorze: "Podgórze", nowa_huta: "Nowa Huta", bronowice: "Bronowice", pradnik: "Prądnik" },
+  },
+  pl: {
+    pageTitle: "Przewodnik Kraków Licea 2027",
+    title: "Przewodnik po krakowskich liceach 2027",
+    subtitle: "Wybór liceum w Krakowie  |  Egzaminy: kwiecień 2027  |  Dane: Perspektywy 2025/2026 + oficjalne progi",
+    sidebarSearch: "Szukaj po nazwie / numerze", searchPlaceholder: "np. V, 5, Witkowski, Sobieski…",
+    sidebarSpec: "Specjalizacja",
+    spec_math: "Matematyka / Fizyka", spec_bio: "Biologia / Chemia (pre-med)",
+    spec_languages: "Języki / Humanistyka", spec_it: "IT / Algorytmika",
+    spec_ib: "IB (Matura Międzynarodowa)", spec_economics: "Ekonomia",
+    spec_sport: "Sport", spec_art: "Sztuka / Muzyka", spec_general: "Ogólny",
+    sidebarDistrict: "Dzielnica miasta",
+    dist_centrum: "Centrum (Stare Miasto / Śródmieście)", dist_grzegorzki: "Grzegórzki",
+    dist_krowodrza: "Krowodrza", dist_podgorze: "Podgórze (Południe)",
+    dist_nowa_huta: "Nowa Huta / Bieńczyce (Wschód)", dist_bronowice: "Bronowice / Północ",
+    dist_pradnik: "Prądnik / Inne",
+    sidebarScore: "Minimalny próg punktowy",
+    scoreLabel: "Pokaż szkoły gdzie max próg ≤",
+    scoreAny: "Dowolny (do 190 pkt)", pts: "pkt",
+    sidebarType: "Typ szkoły",
+    type_public: "Publiczna (bezpłatna)", type_private: "Prywatna (płatna)", type_religious: "Katolicka / Religijna",
+    sidebarShowOnly: "Pokaż tylko",
+    filterTop10: "Tylko Top 10 rekomendacji", filterIB: "Ma program IB",
+    resetBtn: "Resetuj filtry",
+    showingBefore: "Wyświetlanych szkół: ", showingAfter: "",
+    cardThreshold: "Próg przyjęć (2025/26)", cardLocalRank: "Ranking lokalny 2024/2025",
+    cardMatura: "Zdawalność matury", cardMathAvg: "Śr. wynik z mat. (2025)", cardEngAvg: "Śr. wynik z ang. (2025)",
+    minPts: "Min pkt", maxPts: "Max pkt", classProfiles: "Profile klas",
+    pros: "✅ Zalety", cons: "❌ Wady",
+    sentiment_positive: "✅ Pozytywne opinie", sentiment_mixed: "⚠️ Mieszane opinie", sentiment_negative: "❌ Negatywne tendencje",
+    rec1: "⭐ #1 Rekomendacja", rec2: "🏆 #2 Wybór", rec3: "🥇 #3 Wybór", recOther: "#N Wybór",
+    badge_private: "Prywatna", badge_catholic: "Katolicka",
+    officialSite: "Oficjalna strona ↗", noSite: "Brak strony",
+    noResults: "Żadna szkoła nie spełnia kryteriów.",
+    sportTest: "Test sportowy / b.d.", ownRecruitment: "Własna rekrutacja / brak danych",
+    distLabel: { centrum: "Stare Miasto", grzegorzki: "Grzegórzki", krowodrza: "Krowodrza", podgorze: "Podgórze", nowa_huta: "Nowa Huta", bronowice: "Bronowice", pradnik: "Prądnik" },
+  },
+  ua: {
+    pageTitle: "Гід Краків Ліцеї 2027",
+    title: "Гід по краківських ліцеях 2027",
+    subtitle: "Вибір ліцею у Кракові  |  Іспити: квітень 2027  |  Дані: Perspektywy 2025/2026 + офіційні пороги",
+    sidebarSearch: "Пошук за назвою / номером", searchPlaceholder: "напр. V, 5, Witkowski, Sobieski…",
+    sidebarSpec: "Спеціалізація",
+    spec_math: "Математика / Фізика", spec_bio: "Біологія / Хімія (медичний)",
+    spec_languages: "Мови / Гуманітарні науки", spec_it: "IT / Алгоритміка",
+    spec_ib: "IB (Міжнародний бакалавр)", spec_economics: "Економіка",
+    spec_sport: "Спорт", spec_art: "Мистецтво / Музика", spec_general: "Загальний",
+    sidebarDistrict: "Район міста",
+    dist_centrum: "Центр (Stare Miasto / Śródmieście)", dist_grzegorzki: "Гжегужки",
+    dist_krowodrza: "Кроводжа", dist_podgorze: "Підгуже (Південь)",
+    dist_nowa_huta: "Нова Гута / Бєнчице (Схід)", dist_bronowice: "Броновіце / Північ",
+    dist_pradnik: "Прондник / Інше",
+    sidebarScore: "Мінімальний прохідний бал",
+    scoreLabel: "Показати школи з максимальним порогом ≤",
+    scoreAny: "Будь-який (до 190 балів)", pts: "балів",
+    sidebarType: "Тип школи",
+    type_public: "Державна (безкоштовна)", type_private: "Приватна (платна)", type_religious: "Католицька / Релігійна",
+    sidebarShowOnly: "Показати тільки",
+    filterTop10: "Тільки Топ 10 рекомендацій", filterIB: "Є програма IB",
+    resetBtn: "Скинути фільтри",
+    showingBefore: "Показано шкіл: ", showingAfter: "",
+    cardThreshold: "Прохідний бал (2025/26)", cardLocalRank: "Місц. рейтинг 2024/2025",
+    cardMatura: "Відсоток складання матури", cardMathAvg: "Сер. бал з мат. (2025)", cardEngAvg: "Сер. бал з англ. (2025)",
+    minPts: "Мін балів", maxPts: "Макс балів", classProfiles: "Профілі класів",
+    pros: "✅ Переваги", cons: "❌ Недоліки",
+    sentiment_positive: "✅ Позитивні відгуки", sentiment_mixed: "⚠️ Змішані відгуки", sentiment_negative: "❌ Негативна тенденція",
+    rec1: "⭐ #1 Рекомендована", rec2: "🏆 #2 Вибір", rec3: "🥇 #3 Вибір", recOther: "#N Вибір",
+    badge_private: "Приватна", badge_catholic: "Католицька",
+    officialSite: "Офіційний сайт ↗", noSite: "Сайт відсутній",
+    noResults: "Жодна школа не відповідає фільтрам.",
+    sportTest: "Спортивний тест / н/д", ownRecruitment: "Власний набір / немає даних",
+    distLabel: { centrum: "Старе Місто", grzegorzki: "Гжегужки", krowodrza: "Кроводжа", podgorze: "Підгуже", nowa_huta: "Нова Гута", bronowice: "Броновіце", pradnik: "Прондник" },
+  },
+  ru: {
+    pageTitle: "Путеводитель Краков Лицеи 2027",
+    title: "Путеводитель по краковским лицеям 2027",
+    subtitle: "Выбор лицея в Кракове  |  Экзамены: апрель 2027  |  Данные: Perspektywy 2025/2026 + официальные пороги",
+    sidebarSearch: "Поиск по названию / номеру", searchPlaceholder: "напр. V, 5, Witkowski, Sobieski…",
+    sidebarSpec: "Специализация",
+    spec_math: "Математика / Физика", spec_bio: "Биология / Химия (мед. направление)",
+    spec_languages: "Языки / Гуманитарные науки", spec_it: "IT / Алгоритмика",
+    spec_ib: "IB (Международный бакалавриат)", spec_economics: "Экономика",
+    spec_sport: "Спорт", spec_art: "Искусство / Музыка", spec_general: "Общий",
+    sidebarDistrict: "Район города",
+    dist_centrum: "Центр (Stare Miasto / Śródmieście)", dist_grzegorzki: "Гжегужки",
+    dist_krowodrza: "Кроводжа", dist_podgorze: "Подгуже (Юг)",
+    dist_nowa_huta: "Нова Хута / Бенчице (Восток)", dist_bronowice: "Броновице / Север",
+    dist_pradnik: "Прондник / Другое",
+    sidebarScore: "Минимальный проходной балл",
+    scoreLabel: "Показать школы с максимальным порогом ≤",
+    scoreAny: "Любой (до 190 баллов)", pts: "баллов",
+    sidebarType: "Тип школы",
+    type_public: "Государственная (бесплатная)", type_private: "Частная (платная)", type_religious: "Католическая / Религиозная",
+    sidebarShowOnly: "Показать только",
+    filterTop10: "Только Топ 10 рекомендаций", filterIB: "Есть программа IB",
+    resetBtn: "Сбросить фильтры",
+    showingBefore: "Показано школ: ", showingAfter: "",
+    cardThreshold: "Проходной балл (2025/26)", cardLocalRank: "Местный рейтинг 2024/2025",
+    cardMatura: "Процент сдачи матуры", cardMathAvg: "Ср. балл по мат. (2025)", cardEngAvg: "Ср. балл по англ. (2025)",
+    minPts: "Мин баллов", maxPts: "Макс баллов", classProfiles: "Профили классов",
+    pros: "✅ Преимущества", cons: "❌ Недостатки",
+    sentiment_positive: "✅ Положительные отзывы", sentiment_mixed: "⚠️ Смешанные отзывы", sentiment_negative: "❌ Негативная тенденция",
+    rec1: "⭐ #1 Рекомендуемая", rec2: "🏆 #2 Выбор", rec3: "🥇 #3 Выбор", recOther: "#N Выбор",
+    badge_private: "Частная", badge_catholic: "Католическая",
+    officialSite: "Официальный сайт ↗", noSite: "Сайт отсутствует",
+    noResults: "Ни одна школа не соответствует фильтрам.",
+    sportTest: "Спортивный тест / н/д", ownRecruitment: "Собственный набор / нет данных",
+    distLabel: { centrum: "Старый Город", grzegorzki: "Гжегужки", krowodrza: "Кроводжа", podgorze: "Подгуже", nowa_huta: "Нова Хута", bronowice: "Броновице", pradnik: "Прондник" },
+  },
+};
+
+let currentLang = localStorage.getItem('kl_lang') || 'en';
+
+function t(key) {
+  const d = i18n[currentLang];
+  return (d && d[key] !== undefined) ? d[key] : (i18n.en[key] || key);
+}
+
+const schools = [
+  {
+    id: "v-lo", name: "V LO im. Augusta Witkowskiego", shortName: "V LO (Piątka)",
+    address: "ul. Studencka 12", district: "centrum", type: "public", tier: "elite",
+    rank2024_local: 1, rank2025_local: 1, rank_national: "🥈 #2 nationally (3 years)",
+    threshold_min: 173, threshold_max: 187, specs: ["math","it","bio","languages"],
+    hasIB: false, top10: 2, website: "https://www.v-lo.krakow.pl",
+    matura_pass: "100%", math_avg: "94.28%", eng_avg: "97.65%", sentiment: "positive",
+    profiles: [
+      { name: "1E — Algorithmics", subjects: "Math + Physics + IT + Algorithmics (UJ)", highlight: true },
+      { name: "1D/1G — Mat-Fiz-IT", subjects: "Math + Physics + IT (AGH / UJ Physics partnership)" },
+      { name: "1F/1H — Bio-Chem-Math", subjects: "Biology + Chemistry + Math (UJ Chemistry)" },
+      { name: "1C — Math-Chemistry", subjects: "Math + Chemistry (UJ labs)" },
+      { name: "1A/1B — Law-Humanities", subjects: "History + WOS + Polish + Geography (UJ collaboration)" },
+    ],
+    pros: ["#2 in Poland — unmatched prestige", "UJ/AGH co-teaching from grade 1", "130 Olympic winners/year", "Best peer group in city"],
+    cons: ["Brutally demanding — only for exceptional students", "High stress, high homework load", "Threshold 186+ for top classes"],
+    verdict: "Best in Krakow. Only apply if the student is top-of-class.",
+    _t: {
+      pl: {
+        pros: ["#2 w Polsce — niezrównany prestiż", "Współpraca dydaktyczna z UJ/AGH od klasy 1", "130 laureatów olimpiad rocznie", "Najlepsze środowisko rówieśnicze w mieście"],
+        cons: ["Brutalne wymagania — tylko dla wyjątkowych uczniów", "Wysoki stres, dużo prac domowych", "Próg 186+ dla najlepszych klas"],
+        verdict: "Najlepsza w Krakowie. Aplikuj tylko jeśli uczeń jest w absolutnej czołówce klasy.",
+        profileSubjects: ["Matematyka + Fizyka + IT + Algorytmika (UJ)", "Matematyka + Fizyka + IT (współpraca AGH/UJ Fizyka)", "Biologia + Chemia + Matematyka (UJ Chemia)", "Matematyka + Chemia (laboratoria UJ)", "Historia + WOS + Polski + Geografia (współpraca UJ)"],
+      },
+      ua: {
+        pros: ["#2 у Польщі — неперевершений престиж", "Спільне викладання з UJ/AGH з 1 класу", "130 переможців олімпіад на рік", "Найкраще середовище однолітків у місті"],
+        cons: ["Надзвичайно висока вимогливість — лише для виняткових учнів", "Високий стрес, велике навчальне навантаження", "Поріг 186+ для топових класів"],
+        verdict: "Найкраща в Кракові. Подавайте лише якщо учень в абсолютному топі класу.",
+        profileSubjects: ["Математика + Фізика + IT + Алгоритміка (UJ)", "Математика + Фізика + IT (партнерство AGH/UJ Фізика)", "Біологія + Хімія + Математика (UJ Хімія)", "Математика + Хімія (лабораторії UJ)", "Історія + WOS + Польська + Географія (співпраця UJ)"],
+      },
+      ru: {
+        pros: ["#2 в Польше — непревзойдённый престиж", "Совместное преподавание с UJ/AGH с 1 класса", "130 победителей олимпиад в год", "Лучшая атмосфера сверстников в городе"],
+        cons: ["Чрезвычайно высокие требования — только для исключительных учеников", "Высокий стресс, большая нагрузка", "Порог 186+ для лучших классов"],
+        verdict: "Лучшая в Кракове. Подавайте только если ученик в абсолютном топе класса.",
+        profileSubjects: ["Математика + Физика + IT + Алгоритмика (UJ)", "Математика + Физика + IT (партнёрство AGH/UJ Физика)", "Биология + Химия + Математика (UJ Химия)", "Математика + Химия (лаборатории UJ)", "История + WOS + Польский + География (сотрудничество UJ)"],
+      },
+    },
+  },
+  {
+    id: "viii-lo", name: "VIII LO im. Stanisława Wyspiańskiego", shortName: "VIII LO (Wyspiański)",
+    address: "ul. Grzegórzecka 24", district: "grzegorzki", type: "public", tier: "top",
+    rank2024_local: 9, rank2025_local: 2, rank_national: "Top 20–30 nationally (2025), rising",
+    threshold_min: 168, threshold_max: 177, specs: ["math","bio","languages"],
+    hasIB: false, top10: 1, website: "https://www.viii-lo.krakow.pl",
+    matura_pass: "100%", math_avg: "92.80%", eng_avg: "97.59%", sentiment: "positive",
+    profiles: [
+      { name: "Bio-Chem-Math", subjects: "Biology + Chemistry + Math", highlight: true },
+      { name: "Mat-Fiz-IT", subjects: "Math + Physics + IT" },
+      { name: "Humanities", subjects: "Polish + History + others" },
+    ],
+    pros: ["~20 students/class — best ratio in Krakow", "100% matura pass rate + 92.8% math avg", "Most popular school 2025 by applicants", "Rising ranking — momentum school"],
+    cons: ["Less tradition/brand than V LO or I LO", "Check commute to Grzegórzki", "Threshold rising — likely 175–180+ in 2027"],
+    verdict: "TOP RECOMMENDATION. Best balance of quality + individual attention.",
+    _t: {
+      pl: {
+        pros: ["~20 uczniów/klasa — najlepszy wskaźnik w Krakowie", "100% zdawalności matury + 92,8% śr. z matematyki", "Najpopularniejsza szkoła 2025 wg liczby kandydatów", "Rosnący ranking — szkoła z rozmachem"],
+        cons: ["Mniej tradycji/marki niż V LO lub I LO", "Sprawdź dojazd na Grzegórzki", "Rosnący próg — prawdopodobnie 175–180+ w 2027"],
+        verdict: "GŁÓWNA REKOMENDACJA. Najlepsze połączenie jakości i indywidualnego podejścia.",
+        profileSubjects: ["Biologia + Chemia + Matematyka", "Matematyka + Fizyka + IT", "Polski + Historia + inne"],
+      },
+      ua: {
+        pros: ["~20 учнів/клас — найкращий показник у Кракові", "100% складання матури + 92,8% сер. з математики", "Найпопулярніша школа 2025 за кількістю вступників", "Зростаючий рейтинг — школа на підйомі"],
+        cons: ["Менше традицій/бренду ніж V LO чи I LO", "Перевірте маршрут до Гжегужків", "Поріг зростає — ймовірно 175–180+ у 2027"],
+        verdict: "ГОЛОВНА РЕКОМЕНДАЦІЯ. Найкращий баланс якості та індивідуальної уваги.",
+        profileSubjects: ["Біологія + Хімія + Математика", "Математика + Фізика + IT", "Польська + Історія + інше"],
+      },
+      ru: {
+        pros: ["~20 учеников/класс — лучший показатель в Кракове", "100% сдаваемость матуры + 92,8% ср. по математике", "Самая популярная школа 2025 по числу абитуриентов", "Растущий рейтинг — школа на подъёме"],
+        cons: ["Меньше традиций/бренда чем V LO или I LO", "Проверьте маршрут до Гжегужек", "Порог растёт — вероятно 175–180+ в 2027"],
+        verdict: "ГЛАВНАЯ РЕКОМЕНДАЦИЯ. Лучший баланс качества и индивидуального внимания.",
+        profileSubjects: ["Биология + Химия + Математика", "Математика + Физика + IT", "Польский + История + другое"],
+      },
+    },
+  },
+  {
+    id: "i-lo", name: "I LO im. Bartłomieja Nowodworskiego", shortName: "I LO (Nowodworek)",
+    address: "Plac Na Groblach 9", district: "centrum", type: "public", tier: "top",
+    rank2024_local: 2, rank2025_local: 3, rank_national: "#12 nationally (2025), was #8 in 2024",
+    threshold_min: 165, threshold_max: 176, specs: ["math","bio","languages","economics","general"],
+    hasIB: false, top10: 3, website: "https://www.nowodworek.krakow.pl",
+    matura_pass: "99.46%", math_avg: "90.69%", eng_avg: "97.39%", sentiment: "positive",
+    profiles: [
+      { name: "A — Math-Physics-IT", subjects: "Math + Physics + IT; UJ Computational Math dept.", highlight: true },
+      { name: "K — Classics (Latin-Greek)", subjects: "Latin + Greek + History + Polish; UNIQUE IN POLAND", highlight: true },
+      { name: "G — Math-Geography-Economics", subjects: "Math + Geography + English; UEK campus from grade 2" },
+      { name: "D — Bio-Chem-Math", subjects: "Biology + Chemistry + Math (medicine path)" },
+      { name: "C — Bio-Chemistry", subjects: "Biology + Chemistry" },
+      { name: "E — History-WOS-English", subjects: "History + Social Studies + English" },
+      { name: "B — Math-Physics-IT", subjects: "Math + Physics + IT" },
+    ],
+    pros: ["Widest profile choice — 7 tracks", "Founded ~1588 — oldest school, best alumni network", "Class K unique in all Poland", "Dual UJ + UEK patronage"],
+    cons: ["National ranking declining slightly (#8→#16)", "Less innovative model than VIII LO", "City centre — limited outdoor space"],
+    verdict: "Best for undecided students or humanities-leaning. Exceptional variety.",
+    _t: {
+      pl: {
+        pros: ["Najszerszy wybór profili — 7 ścieżek", "Założone ok. 1588 — najstarsza szkoła, najlepsza sieć absolwentów", "Klasa K unikalna w całej Polsce", "Podwójny patronat UJ + UEK"],
+        cons: ["Lekko spadający ranking krajowy (#8→#16)", "Mniej innowacyjny model niż VIII LO", "Centrum — ograniczona przestrzeń zewnętrzna"],
+        verdict: "Najlepsza dla niezdecydowanych lub humanistycznie nastawionych. Wyjątkowa różnorodność.",
+        profileSubjects: ["Matematyka + Fizyka + IT; Wydział Mat. Obliczeniowej UJ", "Łacina + Greka + Historia + Polski; JEDYNA TAKA W POLSCE", "Matematyka + Geografia + Angielski; kampus UEK od kl. 2", "Biologia + Chemia + Matematyka (ścieżka medyczna)", "Biologia + Chemia", "Historia + WOS + Angielski", "Matematyka + Fizyka + IT"],
+      },
+      ua: {
+        pros: ["Найширший вибір профілів — 7 напрямків", "Засновано бл. 1588 — найстаріша школа, найкраща мережа випускників", "Клас K унікальний у всій Польщі", "Подвійне покровительство UJ + UEK"],
+        cons: ["Трохи знижується національний рейтинг (#8→#16)", "Менш інноваційна модель ніж VIII LO", "Центр міста — обмежений простір на відкритому повітрі"],
+        verdict: "Найкраща для тих, хто не визначився, або схильних до гуманітарних наук. Виняткова різноманітність.",
+        profileSubjects: ["Математика + Фізика + IT; UJ Обчисл. математика", "Латина + Грецька + Історія + Польська; УНІКАЛЬНО В ПОЛЬЩІ", "Математика + Географія + Англійська; кампус UEK з кл. 2", "Біологія + Хімія + Математика (медичний шлях)", "Біологія + Хімія", "Історія + WOS + Англійська", "Математика + Фізика + IT"],
+      },
+      ru: {
+        pros: ["Наибольший выбор профилей — 7 направлений", "Основана ок. 1588 — старейшая школа, лучшая сеть выпускников", "Класс K уникален во всей Польше", "Двойное покровительство UJ + UEK"],
+        cons: ["Незначительное падение национального рейтинга (#8→#16)", "Менее инновационная модель чем VIII LO", "Центр города — ограниченное пространство на улице"],
+        verdict: "Лучшая для неопределившихся или гуманитарно-ориентированных. Исключительное разнообразие.",
+        profileSubjects: ["Математика + Физика + IT; UJ Вычисл. математика", "Латынь + Греческий + История + Польский; УНИКАЛЬНО В ПОЛЬШЕ", "Математика + География + Английский; кампус UEK со кл. 2", "Биология + Химия + Математика (медицинский путь)", "Биология + Химия", "История + WOS + Английский", "Математика + Физика + IT"],
+      },
+    },
+  },
+  {
+    id: "ii-lo", name: "II LO im. Króla Jana III Sobieskiego", shortName: "II LO (Sobieski)",
+    address: "ul. Jana Sobieskiego 9", district: "centrum", type: "public", tier: "top",
+    rank2024_local: 3, rank2025_local: 4, rank_national: "~#50–60 nationally",
+    threshold_min: 168, threshold_max: 178, specs: ["math","languages"],
+    hasIB: false, top10: 4, website: "https://www.sobieski.krakow.pl",
+    matura_pass: "100%", math_avg: "92.26%", eng_avg: "95.67%", sentiment: "positive",
+    profiles: [
+      { name: "1A — Math-Physics-IT", subjects: "Math + Physics + IT; UJ math olympiad classes", highlight: true },
+      { name: "German DSD I/II", subjects: "German 6h/week — recognized German language diploma", highlight: true },
+      { name: "Other classes", subjects: "Various incl. 3D printing workshop" },
+    ],
+    pros: ["German DSD certificate — opens German/Austrian university doors", "Strong math olympiad preparation", "100% matura pass rate", "3D printing + maker culture"],
+    cons: ["German DSD requires 6h/week commitment for 4 years", "Less brand recognition than V/I LO"],
+    verdict: "Best choice if interested in German-speaking universities or strong math.",
+    _t: {
+      pl: {
+        pros: ["Certyfikat DSD z niem. — otwiera drzwi do uczelni niem./austriackich", "Silne przygotowanie do olimpiad matematycznych", "100% zdawalności matury", "Druk 3D + kultura makerska"],
+        cons: ["DSD wymaga 6h/tyg. przez 4 lata", "Mniej rozpoznawalna marka niż V/I LO"],
+        verdict: "Najlepszy wybór dla zainteresowanych uczelniami w krajach niem. lub silną matematyką.",
+        profileSubjects: ["Matematyka + Fizyka + IT; klasy olimpiad mat. UJ", "Język niemiecki 6h/tyg. — uznany dyplom DSD", "Różne, m.in. warsztaty druku 3D"],
+      },
+      ua: {
+        pros: ["Сертифікат DSD з нім. — відкриває двері до університетів Німеччини/Австрії", "Сильна підготовка до математичних олімпіад", "100% складання матури", "3D-друк + мейкерська культура"],
+        cons: ["DSD вимагає 6 год/тиж. протягом 4 років", "Менша впізнаваність бренду ніж у V/I LO"],
+        verdict: "Найкращий вибір для тих, хто цікавиться університетами в нім. країнах або сильною математикою.",
+        profileSubjects: ["Математика + Фізика + IT; класи мат. олімпіад UJ", "Німецька 6 год/тиж. — визнаний диплом DSD", "Різне, у т.ч. майстерня 3D-друку"],
+      },
+      ru: {
+        pros: ["Сертификат DSD по нем. — открывает двери в нем./австрийские университеты", "Сильная подготовка к математическим олимпиадам", "100% сдаваемость матуры", "3D-печать + мейкерская культура"],
+        cons: ["DSD требует 6 ч/нед. в течение 4 лет", "Меньшая узнаваемость бренда чем у V/I LO"],
+        verdict: "Лучший выбор для интересующихся нем. университетами или сильной математикой.",
+        profileSubjects: ["Математика + Физика + IT; классы мат. олимпиад UJ", "Немецкий 6 ч/нед. — признанный диплом DSD", "Различные, в т.ч. мастерская 3D-печати"],
+      },
+    },
+  },
+  {
+    id: "vi-lo", name: "VI LO im. Adama Mickiewicza", shortName: "VI LO (Mickiewicz + IB)",
+    address: "ul. Wąska 7", district: "centrum", type: "public", tier: "top",
+    rank2024_local: 5, rank2025_local: 6, rank_national: "~Top 70–90 nationally",
+    threshold_min: 166, threshold_max: 178, specs: ["ib","languages"],
+    hasIB: true, top10: 5, website: "https://vilo.krakow.pl",
+    matura_pass: "—", math_avg: "—", eng_avg: "—", sentiment: "positive",
+    profiles: [
+      { name: "IB Diploma Programme", subjects: "International Baccalaureate — 4-year bilingual track; English exam required", highlight: true },
+      { name: "Standard profiles", subjects: "Regular national curriculum classes also available" },
+    ],
+    pros: ["ONLY public IB school in Krakow", "IB diploma recognized worldwide (UK/US/EU universities)", "English-immersive environment", "Best for international university path"],
+    cons: ["IB program only 4 years old (authorized 2021)", "English proficiency exam required", "IB fees may apply", "National ranking not elite (~#70–90)"],
+    verdict: "Best for families targeting international universities or planning to live abroad.",
+    _t: {
+      pl: {
+        pros: ["JEDYNA publiczna szkoła IB w Krakowie", "Dyplom IB uznawany na całym świecie (UK/USA/UE)", "Środowisko zanurzenia w języku angielskim", "Najlepsza droga na zagraniczne uczelnie"],
+        cons: ["Program IB ma tylko 4 lata (autoryzacja 2021)", "Wymagany egzamin z języka angielskiego", "Mogą obowiązywać opłaty IB", "Ranking krajowy nieelitarny (~#70–90)"],
+        verdict: "Najlepsza dla rodzin planujących zagraniczne uczelnie lub życie za granicą.",
+        profileSubjects: ["Matura Międzynarodowa — 4-letni tor dwujęzyczny; wymagany egzamin z angielskiego", "Dostępne również regularne klasy krajowe"],
+      },
+      ua: {
+        pros: ["ЄДИНА державна школа з програмою IB в Кракові", "Диплом IB визнаний у всьому світі (Велика Британія/США/ЄС)", "Середовище повного занурення в англійську", "Найкращий шлях до міжнародних університетів"],
+        cons: ["Програма IB лише 4 роки (авторизована у 2021)", "Потрібен іспит з англійської мови", "Можливі збори за програму IB", "Національний рейтинг неелітний (~#70–90)"],
+        verdict: "Найкраща для сімей, які планують вступати до міжнародних університетів або жити за кордоном.",
+        profileSubjects: ["Міжнародний бакалавр — 4-річний білінгвальний трек; потрібен іспит з англійської", "Також доступні звичайні класи нац. програми"],
+      },
+      ru: {
+        pros: ["ЕДИНСТВЕННАЯ государственная школа с программой IB в Кракове", "Диплом IB признан во всём мире (Великобритания/США/ЕС)", "Языковая среда полного погружения в английский", "Лучший путь к международным университетам"],
+        cons: ["Программе IB только 4 года (авторизована в 2021)", "Требуется экзамен по английскому", "Возможны сборы за программу IB", "Национальный рейтинг неэлитный (~#70–90)"],
+        verdict: "Лучшая для семей, планирующих международные университеты или переезд за рубеж.",
+        profileSubjects: ["Международный бакалавриат — 4-летний двуязычный трек; требуется экзамен по английскому", "Также доступны обычные классы по нац. программе"],
+      },
+    },
+  },
+  {
+    id: "vii-lo-nalkowska", name: "VII LO im. Zofii Nałkowskiej", shortName: "VII LO (Nałkowska)",
+    address: "ul. Stanisława Skarbińskiego 5", district: "krowodrza", type: "public", tier: "top",
+    rank2024_local: 8, rank2025_local: 12, rank_national: "#253 nationally (2026)",
+    threshold_min: 164, threshold_max: 173, specs: ["bio","math"],
+    hasIB: false, top10: 6, website: "https://vii-lo.krakow.pl",
+    matura_pass: "100%", math_avg: "89.98%", eng_avg: "96.51%", sentiment: "positive",
+    profiles: [
+      { name: "Bio-Chem", subjects: "Biology + Chemistry (pre-medicine / pharmacy / vet)", highlight: true },
+      { name: "Mat-Fiz", subjects: "Mathematics + Physics" },
+      { name: "Humanistic", subjects: "Humanities track" },
+    ],
+    pros: ["Best public school for medical-track bio-chem", "100% matura pass rate all subjects", "Lower threshold than V/VIII LO — accessible for good students", "Krowodrza location"],
+    cons: ["National ranking declining (was #119, now #253)", "Mixed opinions on extracurriculars and building", "Less nationally competitive"],
+    verdict: "Best for medicine/pharmacy track. Accessible for strong but not elite scores.",
+    _t: {
+      pl: {
+        pros: ["Najlepsza publiczna szkoła na profil bio-chem (medyczny)", "100% zdawalności matury ze wszystkich przedmiotów", "Niższy próg niż V/VIII LO — dostępna dla dobrych uczniów", "Lokalizacja Krowodrza"],
+        cons: ["Spada ranking krajowy (był #119, teraz #253)", "Mieszane opinie o zajęciach pozalekcyjnych i budynku", "Mniej konkurencyjna w skali kraju"],
+        verdict: "Najlepsza na ścieżkę medyczną/farmację. Dostępna dla dobrych, ale nie topowych wyników.",
+        profileSubjects: ["Biologia + Chemia (medycyna/farmacja/weterynaria)", "Matematyka + Fizyka", "Humanistyczny"],
+      },
+      ua: {
+        pros: ["Найкраща держ. школа для медичного профілю біо-хім", "100% складання матури з усіх предметів", "Нижчий поріг ніж V/VIII LO — доступна для хороших учнів", "Розташування в Кроводжі"],
+        cons: ["Падає національний рейтинг (був #119, тепер #253)", "Змішані думки про позакласні заходи та будівлю", "Менш конкурентна на національному рівні"],
+        verdict: "Найкраща для медичного/фармацевтичного напрямку. Доступна для сильних, але не топових балів.",
+        profileSubjects: ["Біологія + Хімія (медицина/фармація/ветеринарія)", "Математика + Фізика", "Гуманітарний"],
+      },
+      ru: {
+        pros: ["Лучшая гос. школа для медицинского профиля биохим", "100% сдаваемость матуры по всем предметам", "Более низкий порог чем V/VIII LO — доступна для хороших учеников", "Расположение в Кроводже"],
+        cons: ["Падение национального рейтинга (был #119, теперь #253)", "Смешанные мнения о внеклассных занятиях и здании", "Менее конкурентна на нац. уровне"],
+        verdict: "Лучшая для медицинского/фармацевтического направления. Доступна для сильных, но не топовых баллов.",
+        profileSubjects: ["Биология + Химия (медицина/фармация/ветеринария)", "Математика + Физика", "Гуманитарный"],
+      },
+    },
+  },
+  {
+    id: "iv-lo", name: "IV LO im. Tadeusza Kościuszki", shortName: "IV LO (Kościuszko)",
+    address: "ul. Krzemionki 11", district: "podgorze", type: "public", tier: "top",
+    rank2024_local: 10, rank2025_local: 9, rank_national: "Not in national top 100",
+    threshold_min: 164, threshold_max: 173, specs: ["general","math","bio"],
+    hasIB: false, top10: 7, website: null,
+    matura_pass: "—", math_avg: "—", eng_avg: "—", sentiment: "positive",
+    profiles: [{ name: "Various profiles", subjects: "Math, bio-chem, humanities" }],
+    pros: ["Highest competition ratio in 2024 (2.15 candidates/place)", "Good academic environment", "Best for Podgórze area"],
+    cons: ["Not in national top 100", "Podgórze location inconvenient for center/north families"],
+    verdict: "Good choice for families in south Krakow.",
+    _t: {
+      pl: {
+        pros: ["Najwyższy wskaźnik konkurencji w 2024 (2,15 kandydatów/miejsce)", "Dobre środowisko akademickie", "Najlepsza w rejonie Podgórza"],
+        cons: ["Nie w krajowej setce", "Lokalizacja Podgórze niewygodna dla rodzin z centrum/północy"],
+        verdict: "Dobry wybór dla rodzin z południowego Krakowa.",
+        profileSubjects: ["Matematyka, bio-chemia, humanistyka"],
+      },
+      ua: {
+        pros: ["Найвищий конкурс у 2024 (2,15 кандидатів/місце)", "Хороше академічне середовище", "Найкраща в районі Підгуже"],
+        cons: ["Не входить до національної сотні", "Розташування в Підгуже незручне для сімей з центру/північ"],
+        verdict: "Хороший вибір для сімей у південній частині Кракова.",
+        profileSubjects: ["Математика, біо-хімія, гуманітарні науки"],
+      },
+      ru: {
+        pros: ["Высший конкурс в 2024 (2,15 кандидатов/место)", "Хорошая академическая атмосфера", "Лучшая в районе Подгуже"],
+        cons: ["Не входит в национальную сотню", "Расположение в Подгуже неудобно для семей из центра/севера"],
+        verdict: "Хороший выбор для семей в южном Кракове.",
+        profileSubjects: ["Математика, биохимия, гуманитарные науки"],
+      },
+    },
+  },
+  {
+    id: "ix-lo", name: "IX LO im. Zygmunta Wróblewskiego", shortName: "IX LO (Wróblewski)",
+    address: "ul. Kazimierza Czapińskiego 5", district: "krowodrza", type: "public", tier: "strong",
+    rank2024_local: null, rank2025_local: null, rank_national: "Not ranked nationally",
+    threshold_min: 157, threshold_max: 167, specs: ["general","math"],
+    hasIB: false, top10: 8, website: null,
+    matura_pass: "—", math_avg: "—", eng_avg: "—", sentiment: "mixed",
+    profiles: [{ name: "Various", subjects: "General profiles" }],
+    pros: ["More accessible threshold (~157+)", "Good Krowodrza location", "Decent academic level"],
+    cons: ["Not in national rankings", "Less prestigious than top-5"],
+    verdict: "Solid option for Krowodrza families; more accessible score requirement.",
+    _t: {
+      pl: {
+        pros: ["Bardziej dostępny próg (~157+)", "Dobra lokalizacja Krowodrza", "Przyzwoity poziom akademicki"],
+        cons: ["Nie w rankingach krajowych", "Mniej prestiżowa niż top-5"],
+        verdict: "Solidna opcja dla rodzin z Krowodrzy; bardziej dostępny wymóg punktowy.",
+        profileSubjects: ["Profile ogólne"],
+      },
+      ua: {
+        pros: ["Більш доступний поріг (~157+)", "Хороше розташування в Кроводжі", "Пристойний академічний рівень"],
+        cons: ["Не в національних рейтингах", "Менш престижна ніж топ-5"],
+        verdict: "Надійний варіант для сімей з Кроводжі; нижчі вимоги до балів.",
+        profileSubjects: ["Загальні профілі"],
+      },
+      ru: {
+        pros: ["Более доступный порог (~157+)", "Хорошее расположение в Кроводже", "Достойный академический уровень"],
+        cons: ["Не в национальных рейтингах", "Менее престижная чем топ-5"],
+        verdict: "Надёжный вариант для семей из Кроводжи; более доступные требования к баллам.",
+        profileSubjects: ["Общие профили"],
+      },
+    },
+  },
+  {
+    id: "iii-lo", name: "III LO im. Jana Kochanowskiego", shortName: "III LO (Kochanowski)",
+    address: "os. Wysokie 6, Bieńczyce", district: "nowa_huta", type: "public", tier: "top",
+    rank2024_local: null, rank2025_local: 14, rank_national: "Not in national top 100",
+    threshold_min: 163, threshold_max: 172, specs: ["general","math","bio"],
+    hasIB: false, top10: 9, website: null,
+    matura_pass: "—", math_avg: "—", eng_avg: "—", sentiment: "positive",
+    profiles: [{ name: "Various", subjects: "Math, bio-chem, humanities" }],
+    pros: ["Best liceum in eastern Krakow (Nowa Huta/Bieńczyce)", "Short commute for east-side families", "Good academic level for area"],
+    cons: ["Far from city centre", "Not competitive nationally"],
+    verdict: "Best choice for families in Nowa Huta / Bieńczyce area.",
+    _t: {
+      pl: {
+        pros: ["Najlepsze liceum we wschodnim Krakowie (Nowa Huta/Bieńczyce)", "Krótki dojazd dla rodzin ze wschodniej części", "Dobry poziom akademicki dla okolicy"],
+        cons: ["Daleko od centrum", "Niekonkurencyjna w skali kraju"],
+        verdict: "Najlepszy wybór dla rodzin z Nowej Huty / Bieńczyc.",
+        profileSubjects: ["Matematyka, bio-chemia, humanistyka"],
+      },
+      ua: {
+        pros: ["Найкращий ліцей у східному Кракові (Нова Гута/Бєнчице)", "Короткий шлях для сімей зі східної частини", "Хороший академічний рівень для цього района"],
+        cons: ["Далеко від центру міста", "Не конкурентна на національному рівні"],
+        verdict: "Найкращий вибір для сімей з Нової Гути / Бєнчиць.",
+        profileSubjects: ["Математика, біо-хімія, гуманітарні науки"],
+      },
+      ru: {
+        pros: ["Лучший лицей в восточном Кракове (Нова Хута/Бенчице)", "Короткий путь для семей из восточной части", "Хороший академический уровень для района"],
+        cons: ["Далеко от центра города", "Не конкурентна на нац. уровне"],
+        verdict: "Лучший выбор для семей из Новой Хуты / Бенчице.",
+        profileSubjects: ["Математика, биохимия, гуманитарные науки"],
+      },
+    },
+  },
+  {
+    id: "x-lo", name: "X LO im. Komisji Edukacji Narodowej", shortName: "X LO (KEN)",
+    address: "ul. Zygmunta Wróblewskiego 8", district: "centrum", type: "public", tier: "top",
+    rank2024_local: null, rank2025_local: 13, rank_national: "Not in national top 100",
+    threshold_min: 164, threshold_max: 173, specs: ["general","math"],
+    hasIB: false, top10: 10, website: null,
+    matura_pass: "—", math_avg: "—", eng_avg: "—", sentiment: "mixed",
+    profiles: [{ name: "Various", subjects: "General profiles" }],
+    pros: ["City centre location", "Similar threshold to VII LO and IV LO"],
+    cons: ["Less distinctive than other top-10 schools"],
+    verdict: "Solid fallback in the city centre tier.",
+    _t: {
+      pl: {
+        pros: ["Lokalizacja w centrum miasta", "Podobny próg do VII LO i IV LO"],
+        cons: ["Mniej wyróżniająca się niż inne szkoły z top-10"],
+        verdict: "Solidna opcja rezerwowa w kategorii centrum.",
+        profileSubjects: ["Profile ogólne"],
+      },
+      ua: {
+        pros: ["Розташування в центрі міста", "Подібний поріг до VII LO і IV LO"],
+        cons: ["Менш відрізняється від інших шкіл топ-10"],
+        verdict: "Надійний запасний варіант у категорії центру міста.",
+        profileSubjects: ["Загальні профілі"],
+      },
+      ru: {
+        pros: ["Расположение в центре города", "Похожий порог на VII LO и IV LO"],
+        cons: ["Менее отличительная по сравнению с другими школами топ-10"],
+        verdict: "Надёжный запасной вариант в категории центра города.",
+        profileSubjects: ["Общие профили"],
+      },
+    },
+  },
+  {
+    id: "xiii-lo", name: "XIII LO im. Obrońców Westerplatte", shortName: "XIII LO (Westerplatte)",
+    address: "ul. Sądowa 4", district: "grzegorzki", type: "public", tier: "strong",
+    rank2024_local: null, rank2025_local: 10, rank_national: "Not in national top 100",
+    threshold_min: 161, threshold_max: 170, specs: ["general","math","bio"],
+    hasIB: false, top10: null, website: null,
+    matura_pass: "—", math_avg: "—", eng_avg: "—", sentiment: "positive",
+    profiles: [{ name: "Various", subjects: "Math, bio-chem, humanities" }],
+    pros: ["Grzegórzki — near VIII LO area", "Solid scores, lower threshold"],
+    cons: ["Less known nationally"],
+    verdict: "Good alternative in Grzegórzki area.",
+    _t: {
+      pl: {
+        pros: ["Grzegórzki — blisko rejonu VIII LO", "Solidne wyniki, niższy próg"],
+        cons: ["Mniej znana w kraju"],
+        verdict: "Dobra alternatywa w rejonie Grzegórzek.",
+        profileSubjects: ["Matematyka, bio-chemia, humanistyka"],
+      },
+      ua: {
+        pros: ["Гжегужки — поруч з районом VIII LO", "Стабільні результати, нижчий поріг"],
+        cons: ["Менш відома в країні"],
+        verdict: "Хороша альтернатива в районі Гжегужків.",
+        profileSubjects: ["Математика, біо-хімія, гуманітарні науки"],
+      },
+      ru: {
+        pros: ["Гжегужки — рядом с районом VIII LO", "Стабильные результаты, более низкий порог"],
+        cons: ["Менее известна в стране"],
+        verdict: "Хорошая альтернатива в районе Гжегужек.",
+        profileSubjects: ["Математика, биохимия, гуманитарные науки"],
+      },
+    },
+  },
+  {
+    id: "xi-lo", name: "XI LO im. Marii Dąbrowskiej", shortName: "XI LO (Dąbrowska)",
+    address: "os. Teatralne 33, Nowa Huta", district: "nowa_huta", type: "public", tier: "strong",
+    rank2024_local: null, rank2025_local: 16, rank_national: "Not ranked",
+    threshold_min: 155, threshold_max: 165, specs: ["general"],
+    hasIB: false, top10: null, website: null,
+    matura_pass: "—", math_avg: "—", eng_avg: "—", sentiment: "positive",
+    profiles: [{ name: "Various", subjects: "General" }],
+    pros: ["Good Nowa Huta option", "Accessible threshold"],
+    cons: ["Not competitive nationally"],
+    verdict: "Good for Nowa Huta residents who narrowly miss III LO.",
+    _t: {
+      pl: {
+        pros: ["Dobra opcja dla Nowej Huty", "Dostępny próg"],
+        cons: ["Niekonkurencyjna w skali kraju"],
+        verdict: "Dobra dla mieszkańców Nowej Huty, którzy nieznacznie nie trafią do III LO.",
+        profileSubjects: ["Ogólny"],
+      },
+      ua: {
+        pros: ["Хороший варіант для Нової Гути", "Доступний поріг"],
+        cons: ["Не конкурентна на національному рівні"],
+        verdict: "Хороша для мешканців Нової Гути, які трохи не добрали до III LO.",
+        profileSubjects: ["Загальний"],
+      },
+      ru: {
+        pros: ["Хороший вариант для Новой Хуты", "Доступный порог"],
+        cons: ["Не конкурентна на нац. уровне"],
+        verdict: "Подходит для жителей Новой Хуты, которые немного не набрали для III LO.",
+        profileSubjects: ["Общий"],
+      },
+    },
+  },
+  {
+    id: "lo-sportowe", name: "I LO Sportowe", shortName: "I LO Sportowe",
+    address: "os. Teatralne 35, Nowa Huta", district: "nowa_huta", type: "public", tier: "sport",
+    rank2024_local: null, rank2025_local: null, rank_national: "—",
+    threshold_min: 53, threshold_max: 76, specs: ["sport"],
+    hasIB: false, top10: null, website: null,
+    matura_pass: "—", math_avg: "—", eng_avg: "—", sentiment: "positive",
+    profiles: [{ name: "Sport", subjects: "All sports profiles — physical + academic" }],
+    pros: ["For competitive athletes", "Different admission criteria (sport test)"],
+    cons: ["Academic score less relevant — sport test is key", "Not suitable for academic track"],
+    verdict: "Only apply if the student is a competitive athlete.",
+    _t: {
+      pl: {
+        pros: ["Dla wyczynowych sportowców", "Inne kryteria przyjęcia (test sportowy)"],
+        cons: ["Wynik akademicki mniej istotny — kluczowy test sportowy", "Nie nadaje się na ścieżkę akademicką"],
+        verdict: "Aplikuj tylko jeśli uczeń jest wyczynowym sportowcem.",
+        profileSubjects: ["Wszystkie profile sportowe — fizyczne + akademickie"],
+      },
+      ua: {
+        pros: ["Для спортсменів-змагальників", "Інші критерії вступу (спортивний тест)"],
+        cons: ["Академічний бал менш важливий — ключовий спортивний тест", "Не підходить для академічного напрямку"],
+        verdict: "Подавайте лише якщо учень є спортсменом-змагальником.",
+        profileSubjects: ["Всі спортивні профілі — фізичний + академічний"],
+      },
+      ru: {
+        pros: ["Для спортсменов соревновательного уровня", "Другие критерии приёма (спортивный тест)"],
+        cons: ["Академический балл менее важен — ключевой спортивный тест", "Не подходит для академического направления"],
+        verdict: "Подавайте только если ученик — спортсмен соревновательного уровня.",
+        profileSubjects: ["Все спортивные профили — физический + академический"],
+      },
+    },
+  },
+  {
+    id: "vii-pryw", name: "VII Prywatne LO im. Mikołaja Reja", shortName: "VII Pryw. LO (Rej)",
+    address: "ul. Grodzka 60", district: "centrum", type: "private", tier: "top",
+    rank2024_local: 6, rank2025_local: 5, rank_national: "#25–35 nationally (2025) — big rise",
+    threshold_min: null, threshold_max: null, specs: ["general","math","languages"],
+    hasIB: false, top10: null, website: null,
+    matura_pass: "100%", math_avg: "86.25%", eng_avg: "97.59%", sentiment: "positive",
+    profiles: [{ name: "Various", subjects: "General profiles, languages" }],
+    pros: ["Top 30 nationally (2025) — major climb", "100% matura pass rate", "Small school, individual approach"],
+    cons: ["Fee-paying private school", "Less prestigious brand than V/I LO"],
+    verdict: "Excellent if budget allows fees. Top-tier outcomes.",
+    _t: {
+      pl: {
+        pros: ["Top 30 w Polsce (2025) — wielki awans", "100% zdawalności matury", "Mała szkoła, indywidualne podejście"],
+        cons: ["Płatna szkoła prywatna", "Mniej prestiżowa marka niż V/I LO"],
+        verdict: "Doskonała jeśli budżet pozwala na opłaty. Wyniki na najwyższym poziomie.",
+        profileSubjects: ["Profile ogólne, języki"],
+      },
+      ua: {
+        pros: ["Топ-30 у Польщі (2025) — великий стрибок", "100% складання матури", "Маленька школа, індивідуальний підхід"],
+        cons: ["Платна приватна школа", "Менш престижний бренд ніж V/I LO"],
+        verdict: "Відмінна якщо бюджет дозволяє оплату. Результати найвищого рівня.",
+        profileSubjects: ["Загальні профілі, мови"],
+      },
+      ru: {
+        pros: ["Топ-30 в Польше (2025) — большой подъём", "100% сдаваемость матуры", "Небольшая школа, индивидуальный подход"],
+        cons: ["Платная частная школа", "Менее престижный бренд чем V/I LO"],
+        verdict: "Отличная если бюджет позволяет оплату. Результаты высшего уровня.",
+        profileSubjects: ["Общие профили, языки"],
+      },
+    },
+  },
+
+  // ============================================================
+  // EXTENDED ROSTER — all remaining Krakow day liceums
+  // Source: otouczelnie.pl full register + 2025/26 thresholds + local 2025 ranking
+  // Structured fields (name/address/district/type/threshold/rank) scraped & verified.
+  // Qualitative fields kept factual; matura "—" and sentiment omitted where no data.
+  // ============================================================
+
+  // ---- Public numbered LO (with 2025/26 admission thresholds) ----
+  { id:"xx-lo", name:"XX LO im. Leopolda Staffa", shortName:"XX LO (Staff)", address:"ul. Szlak 5", district:"centrum", type:"public", tier:"top", rank2024_local:null, rank2025_local:null, rank_national:"Not in national top 100", threshold_min:146.00, threshold_max:163.85, specs:["general"], hasIB:false, top10:null, website:null, matura_pass:"—", math_avg:"—", eng_avg:"—", sentiment:"unrated", profiles:[{name:"Various profiles", subjects:"General + extended-subject classes"}], pros:["City-centre location (ul. Szlak)","Wide threshold range — accessible for solid students"], cons:["Not nationally ranked","Limited public data on individual class results"], verdict:"Accessible city-centre option for solid (non-elite) students." },
+  { id:"xxvi-lo", name:"XXVI LO w ZSC im. Marii Skłodowskiej-Curie", shortName:"XXVI LO (ZSC)", address:"ul. Krupnicza 44", district:"centrum", type:"public", tier:"strong", rank2024_local:null, rank2025_local:null, rank_national:"Not in national top 100", threshold_min:149.80, threshold_max:158.80, specs:["general"], hasIB:false, top10:null, website:null, matura_pass:"—", math_avg:"—", eng_avg:"—", sentiment:"unrated", profiles:[{name:"Various profiles", subjects:"General; part of Zespół Szkół Chemicznych — technical/chemistry leaning"}], pros:["Central location (Krupnicza)","Chemistry/technical focus within the school complex"], cons:["Not nationally ranked","Profile choice narrower than standalone liceums"], verdict:"Decent central option, chemistry-leaning environment." },
+  { id:"xxvii-lo", name:"XXVII LO im. dra Henryka Jordana", shortName:"XXVII LO (Jordan)", address:"ul. Senatorska 35", district:"krowodrza", type:"public", tier:"top", rank2024_local:null, rank2025_local:null, rank_national:"Not in national top 100", threshold_min:157.50, threshold_max:164.95, specs:["general"], hasIB:false, top10:null, website:null, matura_pass:"—", math_avg:"—", eng_avg:"—", sentiment:"unrated", profiles:[{name:"Various profiles", subjects:"General + extended-subject classes"}], pros:["Solid Krowodrza option, threshold ~157+","Good for north-west / Zwierzyniec families"], cons:["Not nationally ranked","Less profile detail published"], verdict:"Solid Krowodrza choice just below the top tier." },
+  { id:"xxxi-lo", name:"XXXI LO im. Romana Ingardena", shortName:"XXXI LO (Ingarden)", address:"ul. Kazimierza Odnowiciela 2", district:"pradnik", type:"public", tier:"mid-upper", rank2024_local:null, rank2025_local:null, rank_national:"Not ranked", threshold_min:149.75, threshold_max:154.80, specs:["general"], hasIB:false, top10:null, website:null, matura_pass:"—", math_avg:"—", eng_avg:"—", sentiment:"unrated", profiles:[{name:"Various profiles", subjects:"General + extended-subject classes"}], pros:["Good for Prądnik Czerwony / north-east","Mid-upper threshold — achievable"], cons:["Not ranked","Limited published data"], verdict:"Convenient north-east option with moderate threshold." },
+  { id:"xli-lo", name:"XLI LO", shortName:"XLI LO", address:"Rynek Kleparski 18", district:"centrum", type:"public", tier:"strong", rank2024_local:null, rank2025_local:null, rank_national:"Not ranked", threshold_min:151.20, threshold_max:157.40, specs:["general"], hasIB:false, top10:null, website:null, matura_pass:"—", math_avg:"—", eng_avg:"—", sentiment:"unrated", profiles:[{name:"Various profiles", subjects:"General + extended-subject classes"}], pros:["Very central (Rynek Kleparski)","Accessible threshold (~151+)"], cons:["Not ranked nationally","Limited profile data"], verdict:"Central, accessible option for solid students." },
+  { id:"xlii-lo", name:"XLII LO", shortName:"XLII LO", address:"ul. Studencka 13", district:"centrum", type:"public", tier:"top", rank2024_local:null, rank2025_local:8, rank_national:"Not in national top 100", threshold_min:163.25, threshold_max:172.30, specs:["general","math"], hasIB:false, top10:null, website:null, matura_pass:"—", math_avg:"—", eng_avg:"—", sentiment:"positive", profiles:[{name:"Various profiles", subjects:"General + extended-subject classes; STEM-leaning"}], pros:["#8 locally (2025) — strong results","Top-tier threshold, same street as V LO","Central location"], cons:["Not in national top 100","Overshadowed by neighbouring V LO"], verdict:"Strong central performer (local #8) — a real top-tier alternative." },
+  { id:"xii-lo", name:"XII LO im. Cypriana Norwida", shortName:"XII LO (Norwid)", address:"os. Kolorowe 29a", district:"nowa_huta", type:"public", tier:"mid-upper", rank2024_local:null, rank2025_local:null, rank_national:"Not ranked", threshold_min:142.05, threshold_max:153.80, specs:["general"], hasIB:false, top10:null, website:null, matura_pass:"—", math_avg:"—", eng_avg:"—", sentiment:"unrated", profiles:[{name:"Various profiles", subjects:"General + extended-subject classes"}], pros:["Nowa Huta location","Moderate threshold — accessible"], cons:["Not ranked","East side — far from centre"], verdict:"Reasonable Nowa Huta option for mid-range scores." },
+  { id:"xv-lo", name:"XV LO im. Marii Skłodowskiej-Curie", shortName:"XV LO", address:"al. Dygasińskiego 15", district:"podgorze", type:"public", tier:"strong", rank2024_local:null, rank2025_local:null, rank_national:"Not ranked", threshold_min:137.30, threshold_max:156.90, specs:["general"], hasIB:false, top10:null, website:null, matura_pass:"—", math_avg:"—", eng_avg:"—", sentiment:"unrated", profiles:[{name:"Various profiles", subjects:"General + extended-subject classes"}], pros:["Good for Bieżanów-Prokocim / south","Wide threshold range"], cons:["Not ranked","South-east — long commute from centre/north"], verdict:"Local choice for the Bieżanów-Prokocim area." },
+  { id:"xliv-lo", name:"XLIV LO", shortName:"XLIV LO", address:"ul. Bernardyńska 7", district:"centrum", type:"public", tier:"strong", rank2024_local:null, rank2025_local:null, rank_national:"Not ranked", threshold_min:135.50, threshold_max:162.25, specs:["general"], hasIB:false, top10:null, website:null, matura_pass:"—", math_avg:"—", eng_avg:"—", sentiment:"unrated", profiles:[{name:"Various profiles", subjects:"General + extended-subject classes"}], pros:["Central (near Wawel)","Wide threshold range — some accessible classes"], cons:["Not ranked","Mixed class thresholds"], verdict:"Central school with a broad mix of class thresholds." },
+  { id:"xvii-lo", name:"XVII LO im. Młodej Polski", shortName:"XVII LO", address:"ul. Złoty Róg 30", district:"bronowice", type:"public", tier:"mid-upper", rank2024_local:null, rank2025_local:null, rank_national:"Not ranked", threshold_min:97.00, threshold_max:148.65, specs:["general"], hasIB:false, top10:null, website:null, matura_pass:"—", math_avg:"—", eng_avg:"—", sentiment:"unrated", profiles:[{name:"Various profiles", subjects:"General + extended-subject classes"}], pros:["Good for Bronowice / west","Wide range — open-access classes available"], cons:["Not ranked","Very wide threshold spread between classes"], verdict:"West-side option with both selective and open-access classes." },
+  { id:"xxiii-lo", name:"XXIII LO", shortName:"XXIII LO", address:"ul. Seniorów Lotnictwa 5", district:"centrum", type:"public", tier:"mid-upper", rank2024_local:null, rank2025_local:null, rank_national:"Not ranked", threshold_min:133.45, threshold_max:148.20, specs:["general"], hasIB:false, top10:null, website:null, matura_pass:"—", math_avg:"—", eng_avg:"—", sentiment:"unrated", profiles:[{name:"Various profiles", subjects:"General + extended-subject classes"}], pros:["Accessible threshold","Mid-range academic level"], cons:["Not ranked","Limited published data"], verdict:"Mid-range general option." },
+  { id:"xxiv-lo", name:"XXIV LO im. św. Jana Pawła II", shortName:"XXIV LO (JPII)", address:"ul. Wilka-Wyrwińskiego 1", district:"grzegorzki", type:"public", tier:"mid-upper", rank2024_local:null, rank2025_local:null, rank_national:"Not ranked", threshold_min:122.80, threshold_max:146.85, specs:["general"], hasIB:false, top10:null, website:null, matura_pass:"—", math_avg:"—", eng_avg:"—", sentiment:"unrated", profiles:[{name:"Various profiles", subjects:"General + extended-subject classes"}], pros:["Grzegórzki / east-central location","Accessible threshold"], cons:["Not ranked","Limited published data"], verdict:"Accessible option in the Grzegórzki area." },
+  { id:"xxviii-lo", name:"XXVIII LO im. Wojciecha Bednarskiego", shortName:"XXVIII LO (Bednarski)", address:"ul. Tadeusza Czackiego 11", district:"podgorze", type:"public", tier:"mid-upper", rank2024_local:null, rank2025_local:null, rank_national:"Not ranked", threshold_min:139.60, threshold_max:153.40, specs:["general"], hasIB:false, top10:null, website:null, matura_pass:"—", math_avg:"—", eng_avg:"—", sentiment:"unrated", profiles:[{name:"Various profiles", subjects:"General + extended-subject classes"}], pros:["Podgórze location","Moderate threshold"], cons:["Not ranked","Limited published data"], verdict:"Mid-range option for Podgórze families." },
+  { id:"xliii-lo", name:"XLIII LO", shortName:"XLIII LO", address:"ul. Limanowskiego 60-62", district:"podgorze", type:"public", tier:"mid-upper", rank2024_local:null, rank2025_local:null, rank_national:"Not ranked", threshold_min:128.30, threshold_max:147.20, specs:["general"], hasIB:false, top10:null, website:null, matura_pass:"—", math_avg:"—", eng_avg:"—", sentiment:"unrated", profiles:[{name:"Various profiles", subjects:"General + extended-subject classes"}], pros:["Podgórze (near Rynek Podgórski)","Accessible threshold"], cons:["Not ranked","Limited published data"], verdict:"Accessible Podgórze option." },
+  { id:"xlvi-lo", name:"XLVI LO", shortName:"XLVI LO", address:"ul. Dietla 70", district:"centrum", type:"public", tier:"mid", rank2024_local:null, rank2025_local:null, rank_national:"Not ranked", threshold_min:124.05, threshold_max:144.20, specs:["general"], hasIB:false, top10:null, website:null, matura_pass:"—", math_avg:"—", eng_avg:"—", sentiment:"unrated", profiles:[{name:"Various profiles", subjects:"General + extended-subject classes"}], pros:["Central (Kazimierz / Dietla)","Accessible threshold"], cons:["Not ranked","Lower threshold tier"], verdict:"Accessible central option." },
+  { id:"xviii-lo-na-blonie", name:"XVIII LO", shortName:"XVIII LO", address:"ul. Na Błonie 15b", district:"bronowice", type:"public", tier:"mid", rank2024_local:null, rank2025_local:null, rank_national:"Not ranked", threshold_min:122.70, threshold_max:144.75, specs:["general"], hasIB:false, top10:null, website:null, matura_pass:"—", math_avg:"—", eng_avg:"—", sentiment:"unrated", profiles:[{name:"Various profiles", subjects:"General + extended-subject classes"}], pros:["Good for Bronowice / west","Accessible threshold"], cons:["Not ranked","Lower threshold tier"], verdict:"Accessible west-side option." },
+  { id:"xiv-lo", name:"XIV LO", shortName:"XIV LO", address:"ul. Chełmońskiego 24", district:"krowodrza", type:"public", tier:"mid", rank2024_local:null, rank2025_local:null, rank_national:"Not ranked", threshold_min:115.35, threshold_max:134.55, specs:["general"], hasIB:false, top10:null, website:null, matura_pass:"—", math_avg:"—", eng_avg:"—", sentiment:"unrated", profiles:[{name:"Various profiles", subjects:"General + extended-subject classes"}], pros:["Krowodrza / north location","Open access for mid scores"], cons:["Not ranked","Lower threshold tier"], verdict:"Accessible Krowodrza option." },
+  { id:"xvi-lo", name:"XVI LO im. K.K. Baczyńskiego", shortName:"XVI LO (Baczyński)", address:"os. Willowe 1", district:"nowa_huta", type:"public", tier:"mid", rank2024_local:null, rank2025_local:null, rank_national:"Not ranked", threshold_min:62.50, threshold_max:136.40, specs:["general"], hasIB:false, top10:null, website:null, matura_pass:"—", math_avg:"—", eng_avg:"—", sentiment:"unrated", profiles:[{name:"Various profiles", subjects:"General + extended-subject classes"}], pros:["Nowa Huta location","Very wide range incl. open-access classes"], cons:["Not ranked","Large spread between classes"], verdict:"Nowa Huta option with both standard and open-access classes." },
+  { id:"xlv-lo", name:"XLV LO", shortName:"XLV LO", address:"ul. ks. Fr. Blachnickiego 1", district:"podgorze", type:"public", tier:"mid", rank2024_local:null, rank2025_local:null, rank_national:"Not ranked", threshold_min:98.85, threshold_max:123.70, specs:["general"], hasIB:false, top10:null, website:null, matura_pass:"—", math_avg:"—", eng_avg:"—", sentiment:"unrated", profiles:[{name:"Various profiles", subjects:"General + extended-subject classes"}], pros:["South / Bieżanów area","Open access for lower scores"], cons:["Not ranked","Lower threshold tier"], verdict:"Open-access option in the south." },
+  { id:"xxv-lo", name:"XXV LO", shortName:"XXV LO", address:"ul. Telimeny 9", district:"podgorze", type:"public", tier:"mid", rank2024_local:null, rank2025_local:null, rank_national:"Not ranked", threshold_min:88.05, threshold_max:106.15, specs:["general"], hasIB:false, top10:null, website:null, matura_pass:"—", math_avg:"—", eng_avg:"—", sentiment:"unrated", profiles:[{name:"Various profiles", subjects:"General + extended-subject classes"}], pros:["Bieżanów-Prokocim / south","Open access"], cons:["Not ranked","Low threshold tier"], verdict:"Open-access south-side option." },
+  { id:"xxix-lo", name:"XXIX LO", shortName:"XXIX LO", address:"ul. Cechowa 57", district:"podgorze", type:"public", tier:"mid", rank2024_local:null, rank2025_local:null, rank_national:"Not ranked", threshold_min:116.20, threshold_max:116.20, specs:["general"], hasIB:false, top10:null, website:null, matura_pass:"—", math_avg:"—", eng_avg:"—", sentiment:"unrated", profiles:[{name:"Various profiles", subjects:"General + extended-subject classes"}], pros:["Podgórze (Kurdwanów) location","Accessible"], cons:["Not ranked","Single threshold reported (~116)"], verdict:"Local Podgórze option." },
+  { id:"xxx-lo", name:"XXX LO", shortName:"XXX LO", address:"os. Dywizjonu 303 66", district:"nowa_huta", type:"public", tier:"mid", rank2024_local:null, rank2025_local:null, rank_national:"Not ranked", threshold_min:57.00, threshold_max:112.35, specs:["general"], hasIB:false, top10:null, website:null, matura_pass:"—", math_avg:"—", eng_avg:"—", sentiment:"unrated", profiles:[{name:"Various profiles", subjects:"General + extended-subject classes"}], pros:["Nowa Huta location","Open access"], cons:["Not ranked","Low threshold tier"], verdict:"Open-access Nowa Huta option." },
+  { id:"xlvii-lo", name:"XLVII LO", shortName:"XLVII LO", address:"os. Szkolne 18", district:"nowa_huta", type:"public", tier:"mid", rank2024_local:null, rank2025_local:null, rank_national:"Not ranked", threshold_min:57.00, threshold_max:74.35, specs:["general"], hasIB:false, top10:null, website:null, matura_pass:"—", math_avg:"—", eng_avg:"—", sentiment:"unrated", profiles:[{name:"Various profiles", subjects:"General + extended-subject classes"}], pros:["Nowa Huta location","Open access"], cons:["Not ranked","Low threshold tier"], verdict:"Open-access Nowa Huta option." },
+  { id:"xxi-lo", name:"XXI LO im. S.I. Witkiewicza", shortName:"XXI LO (Witkiewicz)", address:"os. Tysiąclecia 15", district:"nowa_huta", type:"public", tier:"mid", rank2024_local:null, rank2025_local:null, rank_national:"Not ranked", threshold_min:42.70, threshold_max:96.40, specs:["general"], hasIB:false, top10:null, website:null, matura_pass:"—", math_avg:"—", eng_avg:"—", sentiment:"unrated", profiles:[{name:"Various profiles", subjects:"General + extended-subject classes"}], pros:["Nowa Huta location","Open access"], cons:["Not ranked","Low threshold tier"], verdict:"Open-access Nowa Huta option." },
+
+  // ---- Religious / Catholic day liceums ----
+  { id:"lo-sw-rity", name:"LO św. Rity", shortName:"LO św. Rity", address:"ul. Skałeczna 10", district:"centrum", type:"religious", tier:"top", rank2024_local:null, rank2025_local:7, rank_national:"—", threshold_min:null, threshold_max:null, specs:["general","languages"], hasIB:false, top10:null, website:null, matura_pass:"—", math_avg:"—", eng_avg:"—", sentiment:"positive", profiles:[{name:"General / humanities", subjects:"Small Catholic liceum; own recruitment", highlight:true}], pros:["#7 locally in 2025 — very strong for a small school","Catholic ethos, small classes, Kazimierz location"], cons:["Own (non-public) recruitment — apply directly","Faith-based environment may not suit all families"], verdict:"Surprisingly high-ranking small Catholic school (local #7, 2025)." },
+  { id:"lo-pijarow", name:"LO Zakonu Pijarów im. ks. Stanisława Konarskiego", shortName:"Pijarzy", address:"ul. Akacjowa 5", district:"centrum", type:"religious", tier:"strong", rank2024_local:4, rank2025_local:18, rank_national:"#67 (2024)", threshold_min:null, threshold_max:null, specs:["general","math","languages"], hasIB:false, top10:null, website:null, matura_pass:"—", math_avg:"—", eng_avg:"—", sentiment:"positive", profiles:[{name:"General academic", subjects:"Piarist order school; own recruitment"}], pros:["#67 nationally (2024), #4 locally (2024)","Strong academic tradition, Catholic ethos"], cons:["Own recruitment / possible fees","Faith-based environment"], verdict:"Long-standing strong Catholic liceum with national-level results." },
+  { id:"lo-salezjanskie", name:"Publiczne Salezjańskie LO", shortName:"Salezjanie", address:"os. Piastów 34", district:"nowa_huta", type:"religious", tier:"strong", rank2024_local:10, rank2025_local:15, rank_national:"—", threshold_min:null, threshold_max:null, specs:["general"], hasIB:false, top10:null, website:null, matura_pass:"—", math_avg:"—", eng_avg:"—", sentiment:"positive", profiles:[{name:"General academic", subjects:"Salesian order school; own recruitment"}], pros:["#10 locally (2024), #15 (2025)","Strong option in the Mistrzejowice / Nowa Huta area"], cons:["Own recruitment","Faith-based environment"], verdict:"Best-regarded Catholic school in the Nowa Huta area." },
+  { id:"lo-jezuitow", name:"Liceum Jezuitów im. św. Stanisława Kostki", shortName:"Jezuici", address:"ul. Spółdzielców 5", district:"podgorze", type:"religious", tier:"strong", rank2024_local:null, rank2025_local:20, rank_national:"—", threshold_min:null, threshold_max:null, specs:["general","languages"], hasIB:false, top10:null, website:null, matura_pass:"—", math_avg:"—", eng_avg:"—", sentiment:"positive", profiles:[{name:"General academic", subjects:"Jesuit order school; own recruitment"}], pros:["#20 locally (2025)","Strong values-based academic environment, Podgórze"], cons:["Own recruitment / possible fees","Faith-based environment"], verdict:"Well-regarded Jesuit liceum in Podgórze." },
+  { id:"lo-prezentek", name:"LO Sióstr Prezentek", shortName:"Prezentki", address:"ul. św. Jana 7", district:"centrum", type:"religious", tier:"mid-upper", rank2024_local:null, rank2025_local:null, rank_national:"—", threshold_min:null, threshold_max:null, specs:["general"], hasIB:false, top10:null, website:null, matura_pass:"—", math_avg:"—", eng_avg:"—", sentiment:"unrated", profiles:[{name:"General academic", subjects:"Presentation Sisters school; own recruitment"}], pros:["Very central (ul. św. Jana)","Small classes, Catholic ethos"], cons:["Own recruitment","Faith-based; girls-oriented tradition"], verdict:"Small central Catholic liceum." },
+  { id:"lo-sw-rodziny", name:"Katolickie LO im. Świętej Rodziny z Nazaretu", shortName:"Św. Rodzina", address:"ul. Pędzichów 13", district:"centrum", type:"religious", tier:"mid-upper", rank2024_local:null, rank2025_local:null, rank_national:"—", threshold_min:null, threshold_max:null, specs:["general"], hasIB:false, top10:null, website:null, matura_pass:"—", math_avg:"—", eng_avg:"—", sentiment:"unrated", profiles:[{name:"General academic", subjects:"Catholic liceum; own recruitment"}], pros:["Central location (Pędzichów)","Small Catholic school"], cons:["Own recruitment","Faith-based environment"], verdict:"Small central Catholic option." },
+  { id:"lo-ss-salezjanek", name:"Publiczne LO Sióstr Salezjanek im. św. Dominika Savio", shortName:"Salezjanki", address:"os. Jagiellońskie 17", district:"nowa_huta", type:"religious", tier:"mid-upper", rank2024_local:null, rank2025_local:null, rank_national:"—", threshold_min:null, threshold_max:null, specs:["general"], hasIB:false, top10:null, website:null, matura_pass:"—", math_avg:"—", eng_avg:"—", sentiment:"unrated", profiles:[{name:"General academic", subjects:"Salesian Sisters school; own recruitment"}], pros:["Nowa Huta location","Small Catholic school, supportive environment"], cons:["Own recruitment","Faith-based environment"], verdict:"Catholic option in Nowa Huta (Salesian Sisters)." },
+  { id:"lo-kr-apostolow", name:"Publiczne LO im. Królowej Apostołów", shortName:"Królowej Apostołów", address:"ul. Bulwarowa 33", district:"nowa_huta", type:"religious", tier:"mid", rank2024_local:null, rank2025_local:null, rank_national:"—", threshold_min:null, threshold_max:null, specs:["general"], hasIB:false, top10:null, website:null, matura_pass:"—", math_avg:"—", eng_avg:"—", sentiment:"unrated", profiles:[{name:"General academic", subjects:"Catholic (Pallottine) school; own recruitment"}], pros:["Nowa Huta (Wzgórza Krzesławickie)","Small Catholic school"], cons:["Own recruitment","Faith-based environment"], verdict:"Small Catholic liceum in eastern Krakow." },
+
+  // ---- Private / social day liceums ----
+  { id:"viii-pryw-akad", name:"VIII Prywatne Akademickie LO", shortName:"VIII Pryw. Akademickie", address:"ul. Karmelicka 45", district:"centrum", type:"private", tier:"top", rank2024_local:7, rank2025_local:11, rank_national:"~#100–111 nationally", threshold_min:null, threshold_max:null, specs:["general","ib","languages"], hasIB:true, top10:null, website:null, matura_pass:"—", math_avg:"—", eng_avg:"—", sentiment:"positive", profiles:[{name:"Academic + IB", subjects:"Private academic liceum with IB Diploma track", highlight:true}], pros:["#7 locally (2024), #11 (2025); ~#100 nationally","Has IB programme; small classes, central location"], cons:["Fee-paying private school","Own recruitment"], verdict:"Strong fee-paying academic school with an IB track." },
+  { id:"iii-spol-slowacki", name:"III Społeczne LO im. Juliusza Słowackiego (STO)", shortName:"III Społ. (Słowacki)", address:"ul. Stradomska 10", district:"centrum", type:"private", tier:"strong", rank2024_local:null, rank2025_local:19, rank_national:"—", threshold_min:null, threshold_max:null, specs:["general","languages"], hasIB:false, top10:null, website:null, matura_pass:"—", math_avg:"—", eng_avg:"—", sentiment:"positive", profiles:[{name:"General academic", subjects:"Social (STO) school; small classes; own recruitment"}], pros:["#19 locally (2025)","Small classes, central (Stradom)"], cons:["Fee-paying social school","Own recruitment"], verdict:"Well-regarded small social liceum in the centre." },
+  { id:"i-spol-krasicki", name:"I Społeczne LO im. I. Krasickiego (STO)", shortName:"I Społ. (Krasicki)", address:"ul. Dunajewskiego 6", district:"centrum", type:"private", tier:"mid-upper", rank2024_local:null, rank2025_local:null, rank_national:"—", threshold_min:null, threshold_max:null, specs:["general","languages"], hasIB:false, top10:null, website:null, matura_pass:"—", math_avg:"—", eng_avg:"—", sentiment:"unrated", profiles:[{name:"General academic", subjects:"Social (STO) school; small classes; own recruitment"}], pros:["Central location, small classes","Long-running social school"], cons:["Fee-paying","Own recruitment"], verdict:"Established small social liceum in the centre." },
+  { id:"i-pryw-pilsudski", name:"I Prywatne LO im. Marszałka J. Piłsudskiego", shortName:"I Pryw. (Piłsudski)", address:"al. Dygasińskiego 5B", district:"podgorze", type:"private", tier:"mid", rank2024_local:null, rank2025_local:null, rank_national:"—", threshold_min:null, threshold_max:null, specs:["general"], hasIB:false, top10:null, website:null, matura_pass:"—", math_avg:"—", eng_avg:"—", sentiment:"unrated", profiles:[{name:"General academic", subjects:"Private liceum; own recruitment"}], pros:["Small private school","South (Prokocim) location"], cons:["Fee-paying","Limited public data"], verdict:"Small private option in the south." },
+  { id:"iii-pryw", name:"III Prywatne LO", shortName:"III Prywatne LO", address:"ul. Sławkowska 20", district:"centrum", type:"private", tier:"mid", rank2024_local:null, rank2025_local:null, rank_national:"—", threshold_min:null, threshold_max:null, specs:["general"], hasIB:false, top10:null, website:null, matura_pass:"—", math_avg:"—", eng_avg:"—", sentiment:"unrated", profiles:[{name:"General academic", subjects:"Private liceum; own recruitment"}], pros:["Very central (Sławkowska)","Small private school"], cons:["Fee-paying","Limited public data"], verdict:"Small central private option." },
+  { id:"iv-pryw-krolow", name:"IV Prywatne LO im. Królów Polskich", shortName:"IV Pryw. (Królów Polskich)", address:"ul. Basztowa 17", district:"centrum", type:"private", tier:"mid", rank2024_local:null, rank2025_local:null, rank_national:"—", threshold_min:null, threshold_max:null, specs:["general"], hasIB:false, top10:null, website:null, matura_pass:"—", math_avg:"—", eng_avg:"—", sentiment:"unrated", profiles:[{name:"General academic", subjects:"Private liceum; own recruitment"}], pros:["Central (Basztowa)","Small private school"], cons:["Fee-paying","Limited public data"], verdict:"Small central private option." },
+  { id:"v-pryw-jadwiga", name:"V Prywatne LO im. Królowej Jadwigi", shortName:"V Pryw. (Kr. Jadwigi)", address:"ul. Smoleńsk 14", district:"centrum", type:"private", tier:"mid-upper", rank2024_local:null, rank2025_local:null, rank_national:"—", threshold_min:null, threshold_max:null, specs:["general","languages"], hasIB:false, top10:null, website:null, matura_pass:"—", math_avg:"—", eng_avg:"—", sentiment:"unrated", profiles:[{name:"General academic", subjects:"Private liceum; own recruitment"}], pros:["Central (Smoleńsk)","Small classes"], cons:["Fee-paying","Limited public data"], verdict:"Small central private option." },
+  { id:"ix-pryw", name:"IX Prywatne LO", shortName:"IX Prywatne LO", address:"ul. Brzozowa 6a", district:"centrum", type:"private", tier:"mid", rank2024_local:null, rank2025_local:null, rank_national:"—", threshold_min:null, threshold_max:null, specs:["general"], hasIB:false, top10:null, website:null, matura_pass:"—", math_avg:"—", eng_avg:"—", sentiment:"unrated", profiles:[{name:"General academic", subjects:"Private liceum; own recruitment"}], pros:["Central (Kazimierz)","Small private school"], cons:["Fee-paying","Limited public data"], verdict:"Small central private option." },
+  { id:"krak-pryw-sobieski", name:"Krakowskie Prywatne LO im. Króla Jana III Sobieskiego", shortName:"Krak. Pryw. (Sobieski)", address:"ul. Wietora 9", district:"centrum", type:"private", tier:"mid", rank2024_local:null, rank2025_local:null, rank_national:"—", threshold_min:null, threshold_max:null, specs:["general"], hasIB:false, top10:null, website:null, matura_pass:"—", math_avg:"—", eng_avg:"—", sentiment:"unrated", profiles:[{name:"General academic", subjects:"Private liceum; own recruitment (distinct from public II LO Sobieski)"}], pros:["Central (Kazimierz/Wietora)","Small private school"], cons:["Fee-paying","Not to be confused with public II LO Sobieski"], verdict:"Small private school (separate from the public Sobieski)." },
+  { id:"lo-noblistow", name:"Prywatne LO z Oddziałami Dwujęzycznymi im. Noblistów Polskich", shortName:"Noblistów (bilingual)", address:"ul. Pachońskiego 5M", district:"krowodrza", type:"private", tier:"mid-upper", rank2024_local:null, rank2025_local:null, rank_national:"—", threshold_min:null, threshold_max:null, specs:["languages","general"], hasIB:false, top10:null, website:null, matura_pass:"—", math_avg:"—", eng_avg:"—", sentiment:"unrated", profiles:[{name:"Bilingual", subjects:"Bilingual classes (Polish-English); own recruitment", highlight:true}], pros:["Bilingual programme","Krowodrza / Prądnik Biały location"], cons:["Fee-paying","Verify language/exam requirements"], verdict:"Bilingual private school in the north-west." },
+  { id:"lo-michalowski", name:"LO z Oddziałem Dwujęzycznym im. Piotra Michałowskiego", shortName:"Michałowski (bilingual)", address:"ul. Michałowskiego 4", district:"centrum", type:"private", tier:"mid-upper", rank2024_local:null, rank2025_local:null, rank_national:"—", threshold_min:null, threshold_max:null, specs:["languages","general"], hasIB:false, top10:null, website:null, matura_pass:"—", math_avg:"—", eng_avg:"—", sentiment:"unrated", profiles:[{name:"Bilingual", subjects:"Bilingual classes; own recruitment", highlight:true}], pros:["Bilingual programme, central location","Small classes"], cons:["Fee-paying","Verify language entry requirements"], verdict:"Central bilingual private school." },
+  { id:"lo-cis", name:"Niepubliczne LO Cracow International School", shortName:"Cracow International (CIS)", address:"ul. Wyczółkowskiego 7", district:"krowodrza", type:"private", tier:"mid-upper", rank2024_local:null, rank2025_local:null, rank_national:"—", threshold_min:null, threshold_max:null, specs:["ib","languages"], hasIB:true, top10:null, website:null, matura_pass:"—", math_avg:"—", eng_avg:"—", sentiment:"unrated", profiles:[{name:"International / IB", subjects:"English-medium international curriculum (IB-oriented); own recruitment", highlight:true}], pros:["International, English-medium programme","Best for expat / internationally-mobile families"], cons:["Fee-paying (premium)","English proficiency required"], verdict:"International school option for families targeting study abroad." },
+  { id:"lo-open-future", name:"Niepubliczne Dwujęzyczne LO Open Future International School", shortName:"Open Future Intl", address:"ul. Pawła z Krosna 10", district:"podgorze", type:"private", tier:"mid-upper", rank2024_local:null, rank2025_local:null, rank_national:"—", threshold_min:null, threshold_max:null, specs:["languages","ib"], hasIB:false, top10:null, website:null, matura_pass:"—", math_avg:"—", eng_avg:"—", sentiment:"unrated", profiles:[{name:"Bilingual / international", subjects:"Bilingual English programme; own recruitment (verify IB status)", highlight:true}], pros:["Bilingual / international focus","English-immersive environment"], cons:["Fee-paying","Verify IB authorization / entry requirements"], verdict:"Bilingual international-style private school in Podgórze." },
+  { id:"lo-davinci-intl", name:"Niepubliczne Dwujęzyczne LO Da Vinci's International High School", shortName:"Da Vinci's Intl", address:"ul. Pilotów 4C", district:"centrum", type:"private", tier:"mid", rank2024_local:null, rank2025_local:null, rank_national:"—", threshold_min:null, threshold_max:null, specs:["languages"], hasIB:false, top10:null, website:null, matura_pass:"—", math_avg:"—", eng_avg:"—", sentiment:"unrated", profiles:[{name:"Bilingual", subjects:"Bilingual English programme; own recruitment"}], pros:["Bilingual English programme","Small classes"], cons:["Fee-paying","Verify entry requirements"], verdict:"Bilingual private school." },
+  { id:"lo-sternik", name:"Niepubliczne LO Sternik-Kraków", shortName:"Sternik", address:"ul. Radzikowskiego 52", district:"krowodrza", type:"private", tier:"mid", rank2024_local:null, rank2025_local:null, rank_national:"—", threshold_min:null, threshold_max:null, specs:["general"], hasIB:false, top10:null, website:null, matura_pass:"—", math_avg:"—", eng_avg:"—", sentiment:"unrated", profiles:[{name:"General academic", subjects:"Single-sex education model; own recruitment"}], pros:["Values-based, single-sex education model","North-west (Prądnik Biały)"], cons:["Fee-paying","Single-sex model may not suit all"], verdict:"Private school with a single-sex, values-based model." },
+  { id:"lo-montessori", name:"Katolickie Liceum Montessori im. Sprawiedliwych Wśród Narodów Świata", shortName:"Montessori (Katolickie)", address:"ul. ks. S. Pawlickiego 1", district:"podgorze", type:"religious", tier:"mid", rank2024_local:null, rank2025_local:null, rank_national:"—", threshold_min:null, threshold_max:null, specs:["general"], hasIB:false, top10:null, website:null, matura_pass:"—", math_avg:"—", eng_avg:"—", sentiment:"unrated", profiles:[{name:"Montessori / Catholic", subjects:"Montessori pedagogy, Catholic ethos; own recruitment"}], pros:["Montessori pedagogy","Small, individualised classes"], cons:["Fee-paying","Niche pedagogy / faith-based"], verdict:"Niche Montessori Catholic liceum." },
+  { id:"lo-kolegium-eur", name:"Kolegium Europejskie — Europejskie Niepubliczne LO", shortName:"Kolegium Europejskie", address:"ul. Ślusarska 9", district:"podgorze", type:"private", tier:"mid", rank2024_local:null, rank2025_local:null, rank_national:"—", threshold_min:null, threshold_max:null, specs:["general","languages"], hasIB:false, top10:null, website:null, matura_pass:"—", math_avg:"—", eng_avg:"—", sentiment:"unrated", profiles:[{name:"General / European", subjects:"Private liceum; own recruitment"}], pros:["Small private school","Podgórze (Zabłocie) location"], cons:["Fee-paying","Limited public data"], verdict:"Small private liceum in Zabłocie." },
+  { id:"lo-emmanuel", name:"Akademickie LO \"emmanuel\"", shortName:"emmanuel", address:"os. Urocze 14", district:"nowa_huta", type:"private", tier:"mid", rank2024_local:null, rank2025_local:null, rank_national:"—", threshold_min:null, threshold_max:null, specs:["general"], hasIB:false, top10:null, website:null, matura_pass:"—", math_avg:"—", eng_avg:"—", sentiment:"unrated", profiles:[{name:"General academic", subjects:"Private liceum; own recruitment"}], pros:["Small private school","Nowa Huta location"], cons:["Fee-paying","Limited public data"], verdict:"Small private option in Nowa Huta." },
+  { id:"lo-davinci-spol", name:"Da Vinci Społeczne LO", shortName:"Da Vinci (społeczne)", address:"os. Na Stoku 34", district:"nowa_huta", type:"private", tier:"mid", rank2024_local:null, rank2025_local:null, rank_national:"—", threshold_min:null, threshold_max:null, specs:["general"], hasIB:false, top10:null, website:null, matura_pass:"—", math_avg:"—", eng_avg:"—", sentiment:"unrated", profiles:[{name:"General academic", subjects:"Social school; own recruitment"}], pros:["Small social school","Nowa Huta location"], cons:["Fee-paying","Limited public data"], verdict:"Small social liceum in Nowa Huta." },
+  { id:"lo-uczen", name:"Niepubliczne Chrześcijańskie LO \"uczeń\"", shortName:"\"Uczeń\" (chrześcijańskie)", address:"ul. Armii Krajowej 4", district:"krowodrza", type:"religious", tier:"mid", rank2024_local:null, rank2025_local:null, rank_national:"—", threshold_min:null, threshold_max:null, specs:["general"], hasIB:false, top10:null, website:null, matura_pass:"—", math_avg:"—", eng_avg:"—", sentiment:"unrated", profiles:[{name:"General / Christian", subjects:"Christian school; own recruitment"}], pros:["Small Christian school","Krowodrza (near AGH/Bronowice)"], cons:["Fee-paying","Faith-based environment"], verdict:"Small Christian private liceum." },
+  { id:"lo-wolna-szkola", name:"Niepubliczne LO \"wolna Szkoła\"", shortName:"Wolna Szkoła", address:"ul. Zawiła 4", district:"podgorze", type:"private", tier:"mid", rank2024_local:null, rank2025_local:null, rank_national:"—", threshold_min:null, threshold_max:null, specs:["general"], hasIB:false, top10:null, website:null, matura_pass:"—", math_avg:"—", eng_avg:"—", sentiment:"unrated", profiles:[{name:"Democratic / alternative", subjects:"Alternative ('free school') pedagogy; own recruitment"}], pros:["Alternative / democratic pedagogy","Individualised approach"], cons:["Fee-paying","Non-traditional model — not for everyone"], verdict:"Alternative 'free school' model for families seeking that approach." },
+
+  // ---- Sport liceums (admission by sport trial; academic score secondary) ----
+  { id:"lo-mistrzostwa-sport", name:"LO Mistrzostwa Sportowego", shortName:"LO Mistrzostwa Sport.", address:"ul. Grochowska 20", district:"grzegorzki", type:"public", tier:"sport", rank2024_local:null, rank2025_local:null, rank_national:"—", threshold_min:null, threshold_max:null, specs:["sport"], hasIB:false, top10:null, website:null, matura_pass:"—", math_avg:"—", eng_avg:"—", sentiment:"unrated", profiles:[{name:"Sports mastery", subjects:"Multiple sport disciplines; admission via sport trial + points"}], pros:["For competitive athletes (sports-mastery track)","Public — no tuition"], cons:["Sport trial is decisive, not academic score","Not an academic-track choice"], verdict:"For competitive athletes only — admission via sport trial." },
+  { id:"lo-niep-ms", name:"Niepubliczne LO Mistrzostwa Sportowego", shortName:"Niepub. LO MS", address:"ul. Szablowskiego 1", district:"krowodrza", type:"private", tier:"sport", rank2024_local:null, rank2025_local:null, rank_national:"—", threshold_min:null, threshold_max:null, specs:["sport"], hasIB:false, top10:null, website:null, matura_pass:"—", math_avg:"—", eng_avg:"—", sentiment:"unrated", profiles:[{name:"Sports mastery", subjects:"Sport-focused; own recruitment + sport trial"}], pros:["Sports-mastery programme","Krowodrza location"], cons:["Fee-paying","For competitive athletes only"], verdict:"Private sports-mastery school for competitive athletes." },
+  { id:"lo-spol-ms", name:"Społeczne LO Mistrzostwa Sportowego", shortName:"Społ. LO MS", address:"ul. Wielicka 101", district:"podgorze", type:"private", tier:"sport", rank2024_local:null, rank2025_local:null, rank_national:"—", threshold_min:null, threshold_max:null, specs:["sport"], hasIB:false, top10:null, website:null, matura_pass:"—", math_avg:"—", eng_avg:"—", sentiment:"unrated", profiles:[{name:"Sports mastery", subjects:"Sport-focused; own recruitment + sport trial"}], pros:["Sports-mastery programme","Podgórze location"], cons:["Fee-paying","For competitive athletes only"], verdict:"Social sports-mastery school for competitive athletes." },
+  { id:"lo-sms-gortat", name:"SMS LO Marcina Gortata", shortName:"SMS Gortat", address:"os. Kościuszkowskie 2A", district:"nowa_huta", type:"private", tier:"sport", rank2024_local:null, rank2025_local:null, rank_national:"—", threshold_min:null, threshold_max:null, specs:["sport"], hasIB:false, top10:null, website:null, matura_pass:"—", math_avg:"—", eng_avg:"—", sentiment:"unrated", profiles:[{name:"Sports mastery", subjects:"Basketball-focused sports-mastery school; own recruitment"}], pros:["Basketball-focused sports-mastery school","Nowa Huta location"], cons:["Fee-paying","For competitive athletes only"], verdict:"Basketball sports-mastery school (Gortat) for competitive athletes." },
+  { id:"lo-pilki-noznej", name:"Niepubliczne LO Szkoły Sportowej Piłki Nożnej im. gen. B. Monda", shortName:"LO Piłki Nożnej (Mond)", address:"os. Szkolne 18", district:"nowa_huta", type:"private", tier:"sport", rank2024_local:null, rank2025_local:null, rank_national:"—", threshold_min:null, threshold_max:null, specs:["sport"], hasIB:false, top10:null, website:null, matura_pass:"—", math_avg:"—", eng_avg:"—", sentiment:"unrated", profiles:[{name:"Football academy", subjects:"Football-focused sports school; own recruitment"}], pros:["Football-focused programme","Nowa Huta location"], cons:["Fee-paying","For competitive footballers only"], verdict:"Football sports school for competitive players." },
+
+  // ---- Music / Art general secondary schools ----
+  { id:"osm-muzyczna", name:"Ogólnokształcąca Szkoła Muzyczna II St.", shortName:"Szkoła Muzyczna II St.", address:"ul. Basztowa 6", district:"centrum", type:"public", tier:"strong", rank2024_local:null, rank2025_local:17, rank_national:"—", threshold_min:null, threshold_max:null, specs:["art"], hasIB:false, top10:null, website:null, matura_pass:"—", math_avg:"—", eng_avg:"—", sentiment:"positive", profiles:[{name:"Music + general academics", subjects:"Combined music + academic curriculum; admission via music aptitude exam", highlight:true}], pros:["#17 locally (2025) — strong matura results","Combines full academic liceum with music education"], cons:["Requires music training / aptitude exam","Heavy combined workload (music + academics)"], verdict:"For musically talented students wanting academics + music together." },
+  { id:"osm-chopin", name:"Państwowa Ogólnokształcąca Szkoła Muzyczna II St. im. F. Chopina", shortName:"PSM im. Chopina", address:"ul. Basztowa 6", district:"centrum", type:"public", tier:"mid-upper", rank2024_local:null, rank2025_local:null, rank_national:"—", threshold_min:null, threshold_max:null, specs:["art"], hasIB:false, top10:null, website:null, matura_pass:"—", math_avg:"—", eng_avg:"—", sentiment:"unrated", profiles:[{name:"Music + general academics", subjects:"State music school with general curriculum; music aptitude exam"}], pros:["State music school + full academics","Central location"], cons:["Requires music training / aptitude exam","Heavy combined workload"], verdict:"State music school combining academics with conservatory training." },
+  { id:"lo-plastyczne", name:"Państwowe LO Sztuk Plastycznych im. J. Kluzy", shortName:"LO Sztuk Plastycznych", address:"ul. Mlaskotów 6", district:"krowodrza", type:"public", tier:"mid-upper", rank2024_local:null, rank2025_local:null, rank_national:"—", threshold_min:null, threshold_max:null, specs:["art"], hasIB:false, top10:null, website:null, matura_pass:"—", math_avg:"—", eng_avg:"—", sentiment:"unrated", profiles:[{name:"Fine arts + academics", subjects:"Fine-arts curriculum + general academics; admission via art portfolio/exam"}], pros:["Fine-arts education with full matura","For artistically talented students"], cons:["Requires art portfolio / aptitude exam","Specialised — art-focused path"], verdict:"For artistically talented students wanting a fine-arts secondary path." },
+];
+
+// Shared phrase dictionary — auto-translates the extended-roster schools (which have no per-school _t)
+const phraseTranslations = {"City-centre location (ul. Szlak)":{"pl":"Lokalizacja w centrum (ul. Szlak)","ua":"Розташування в центрі (вул. Szlak)","ru":"Расположение в центре (ул. Szlak)"},"Wide threshold range — accessible for solid students":{"pl":"Szeroki zakres progów — dostępne dla dobrych uczniów","ua":"Широкий діапазон порогів — доступно для хороших учнів","ru":"Широкий диапазон порогов — доступно для хороших учеников"},"Not nationally ranked":{"pl":"Brak pozycji w rankingu krajowym","ua":"Немає позиції в національному рейтингу","ru":"Нет позиции в национальном рейтинге"},"Limited public data on individual class results":{"pl":"Ograniczone publiczne dane o wynikach poszczególnych klas","ua":"Обмежені публічні дані про результати окремих класів","ru":"Ограниченные публичные данные о результатах отдельных классов"},"Accessible city-centre option for solid (non-elite) students.":{"pl":"Dostępna opcja w centrum dla dobrych (nieelitarnych) uczniów.","ua":"Доступний варіант у центрі для хороших (неелітних) учнів.","ru":"Доступный вариант в центре для хороших (неэлитных) учеников."},"General + extended-subject classes":{"pl":"Klasy ogólne + z przedmiotami rozszerzonymi","ua":"Загальні класи + з профільними предметами","ru":"Общие классы + с профильными предметами"},"Central location (Krupnicza)":{"pl":"Lokalizacja centralna (Krupnicza)","ua":"Центральне розташування (Krupnicza)","ru":"Центральное расположение (Krupnicza)"},"Chemistry/technical focus within the school complex":{"pl":"Profil chemiczny/techniczny w zespole szkół","ua":"Хіміко-технічний профіль у шкільному комплексі","ru":"Химико-технический профиль в школьном комплексе"},"Profile choice narrower than standalone liceums":{"pl":"Węższy wybór profili niż w samodzielnych liceach","ua":"Вужчий вибір профілів ніж у самостійних ліцеях","ru":"Уже выбор профилей чем в самостоятельных лицеях"},"Decent central option, chemistry-leaning environment.":{"pl":"Przyzwoita opcja w centrum, środowisko z naciskiem na chemię.","ua":"Пристойний центральний варіант, середовище з акцентом на хімію.","ru":"Достойный центральный вариант, среда с уклоном в химию."},"General; part of Zespół Szkół Chemicznych — technical/chemistry leaning":{"pl":"Ogólny; część Zespołu Szkół Chemicznych — nachylenie techniczno-chemiczne","ua":"Загальний; частина Zespół Szkół Chemicznych — техніко-хімічний нахил","ru":"Общий; часть Zespół Szkół Chemicznych — технико-химический уклон"},"Solid Krowodrza option, threshold ~157+":{"pl":"Solidna opcja na Krowodrzy, próg ~157+","ua":"Надійний варіант у Кроводжі, поріг ~157+","ru":"Надёжный вариант в Кроводже, порог ~157+"},"Good for north-west / Zwierzyniec families":{"pl":"Dobra dla rodzin z północnego zachodu / Zwierzyńca","ua":"Хороша для родин з північного заходу / Zwierzyniec","ru":"Хороша для семей с северо-запада / Zwierzyniec"},"Less profile detail published":{"pl":"Mniej opublikowanych szczegółów o profilach","ua":"Менше опублікованих деталей про профілі","ru":"Меньше опубликованных деталей о профилях"},"Solid Krowodrza choice just below the top tier.":{"pl":"Solidny wybór na Krowodrzy tuż poniżej ścisłej czołówki.","ua":"Надійний вибір у Кроводжі трохи нижче топ-рівня.","ru":"Надёжный выбор в Кроводже чуть ниже топ-уровня."},"Good for Prądnik Czerwony / north-east":{"pl":"Dobra dla Prądnika Czerwonego / północnego wschodu","ua":"Хороша для Prądnik Czerwony / північного сходу","ru":"Хороша для Prądnik Czerwony / северо-востока"},"Mid-upper threshold — achievable":{"pl":"Próg średnio-wysoki — osiągalny","ua":"Середньо-високий поріг — досяжний","ru":"Средне-высокий порог — достижимый"},"Not ranked":{"pl":"Bez pozycji w rankingu","ua":"Без позиції в рейтингу","ru":"Без позиции в рейтинге"},"Limited published data":{"pl":"Ograniczone opublikowane dane","ua":"Обмежені опубліковані дані","ru":"Ограниченные опубликованные данные"},"Convenient north-east option with moderate threshold.":{"pl":"Wygodna opcja na północnym wschodzie z umiarkowanym progiem.","ua":"Зручний варіант на північному сході з помірним порогом.","ru":"Удобный вариант на северо-востоке с умеренным порогом."},"Very central (Rynek Kleparski)":{"pl":"Bardzo centralnie (Rynek Kleparski)","ua":"Дуже центрально (Rynek Kleparski)","ru":"Очень центрально (Rynek Kleparski)"},"Accessible threshold (~151+)":{"pl":"Dostępny próg (~151+)","ua":"Доступний поріг (~151+)","ru":"Доступный порог (~151+)"},"Not ranked nationally":{"pl":"Bez pozycji w rankingu krajowym","ua":"Без позиції в національному рейтингу","ru":"Без позиции в национальном рейтинге"},"Limited profile data":{"pl":"Ograniczone dane o profilach","ua":"Обмежені дані про профілі","ru":"Ограниченные данные о профилях"},"Central, accessible option for solid students.":{"pl":"Centralna, dostępna opcja dla dobrych uczniów.","ua":"Центральний, доступний варіант для хороших учнів.","ru":"Центральный, доступный вариант для хороших учеников."},"#8 locally (2025) — strong results":{"pl":"#8 lokalnie (2025) — mocne wyniki","ua":"#8 локально (2025) — сильні результати","ru":"#8 локально (2025) — сильные результаты"},"Top-tier threshold, same street as V LO":{"pl":"Próg z najwyższej półki, ta sama ulica co V LO","ua":"Поріг топ-рівня, та сама вулиця що й V LO","ru":"Порог топ-уровня, та же улица что и V LO"},"Central location":{"pl":"Lokalizacja centralna","ua":"Центральне розташування","ru":"Центральное расположение"},"Not in national top 100":{"pl":"Poza krajową setką","ua":"Поза національною сотнею","ru":"Вне национальной сотни"},"Overshadowed by neighbouring V LO":{"pl":"W cieniu sąsiedniego V LO","ua":"У тіні сусіднього V LO","ru":"В тени соседнего V LO"},"Strong central performer (local #8) — a real top-tier alternative.":{"pl":"Mocny gracz w centrum (lokalnie #8) — realna alternatywa z górnej półki.","ua":"Сильний гравець у центрі (локально #8) — реальна альтернатива топ-рівня.","ru":"Сильный игрок в центре (локально #8) — реальная альтернатива топ-уровня."},"General + extended-subject classes; STEM-leaning":{"pl":"Klasy ogólne + rozszerzenia; nachylenie STEM","ua":"Загальні класи + профільні; нахил STEM","ru":"Общие классы + профильные; уклон STEM"},"Nowa Huta location":{"pl":"Lokalizacja Nowa Huta","ua":"Розташування Нова Гута","ru":"Расположение Нова Хута"},"Moderate threshold — accessible":{"pl":"Umiarkowany próg — dostępny","ua":"Помірний поріг — доступний","ru":"Умеренный порог — доступный"},"East side — far from centre":{"pl":"Wschodnia część — daleko od centrum","ua":"Східна частина — далеко від центру","ru":"Восточная часть — далеко от центра"},"Reasonable Nowa Huta option for mid-range scores.":{"pl":"Rozsądna opcja w Nowej Hucie dla średnich wyników.","ua":"Розумний варіант у Новій Гуті для середніх балів.","ru":"Разумный вариант в Новой Хуте для средних баллов."},"Good for Bieżanów-Prokocim / south":{"pl":"Dobra dla Bieżanowa-Prokocimia / południa","ua":"Хороша для Bieżanów-Prokocim / півдня","ru":"Хороша для Bieżanów-Prokocim / юга"},"Wide threshold range":{"pl":"Szeroki zakres progów","ua":"Широкий діапазон порогів","ru":"Широкий диапазон порогов"},"South-east — long commute from centre/north":{"pl":"Południowy wschód — daleki dojazd z centrum/północy","ua":"Південний схід — далека дорога з центру/півночі","ru":"Юго-восток — далёкая дорога из центра/севера"},"Local choice for the Bieżanów-Prokocim area.":{"pl":"Lokalny wybór dla rejonu Bieżanów-Prokocim.","ua":"Місцевий вибір для району Bieżanów-Prokocim.","ru":"Местный выбор для района Bieżanów-Prokocim."},"Central (near Wawel)":{"pl":"Centralnie (blisko Wawelu)","ua":"Центрально (біля Вавелю)","ru":"Центрально (рядом с Вавелем)"},"Wide threshold range — some accessible classes":{"pl":"Szeroki zakres progów — niektóre klasy dostępne","ua":"Широкий діапазон порогів — деякі класи доступні","ru":"Широкий диапазон порогов — некоторые классы доступны"},"Mixed class thresholds":{"pl":"Zróżnicowane progi klas","ua":"Різні пороги класів","ru":"Разные пороги классов"},"Central school with a broad mix of class thresholds.":{"pl":"Centralna szkoła z szerokim wachlarzem progów klas.","ua":"Центральна школа з широким набором порогів класів.","ru":"Центральная школа с широким набором порогов классов."},"Good for Bronowice / west":{"pl":"Dobra dla Bronowic / zachodu","ua":"Хороша для Bronowice / заходу","ru":"Хороша для Bronowice / запада"},"Wide range — open-access classes available":{"pl":"Szeroki zakres — dostępne klasy otwarte","ua":"Широкий діапазон — є класи з відкритим набором","ru":"Широкий диапазон — есть классы открытого набора"},"Very wide threshold spread between classes":{"pl":"Bardzo duży rozrzut progów między klasami","ua":"Дуже великий розкид порогів між класами","ru":"Очень большой разброс порогов между классами"},"West-side option with both selective and open-access classes.":{"pl":"Opcja na zachodzie z klasami selektywnymi i otwartymi.","ua":"Варіант на заході з селективними та відкритими класами.","ru":"Вариант на западе с селективными и открытыми классами."},"Accessible threshold":{"pl":"Dostępny próg","ua":"Доступний поріг","ru":"Доступный порог"},"Mid-range academic level":{"pl":"Średni poziom akademicki","ua":"Середній академічний рівень","ru":"Средний академический уровень"},"Mid-range general option.":{"pl":"Średnia opcja ogólna.","ua":"Середній загальний варіант.","ru":"Средний общий вариант."},"Grzegórzki / east-central location":{"pl":"Lokalizacja Grzegórzki / wschodnie centrum","ua":"Розташування Grzegórzki / східний центр","ru":"Расположение Grzegórzki / восточный центр"},"Accessible option in the Grzegórzki area.":{"pl":"Dostępna opcja w rejonie Grzegórzek.","ua":"Доступний варіант у районі Grzegórzki.","ru":"Доступный вариант в районе Grzegórzki."},"Podgórze location":{"pl":"Lokalizacja Podgórze","ua":"Розташування Podgórze","ru":"Расположение Podgórze"},"Moderate threshold":{"pl":"Umiarkowany próg","ua":"Помірний поріг","ru":"Умеренный порог"},"Mid-range option for Podgórze families.":{"pl":"Średnia opcja dla rodzin z Podgórza.","ua":"Середній варіант для родин з Podgórze.","ru":"Средний вариант для семей из Podgórze."},"Podgórze (near Rynek Podgórski)":{"pl":"Podgórze (blisko Rynku Podgórskiego)","ua":"Podgórze (біля Rynek Podgórski)","ru":"Podgórze (рядом с Rynek Podgórski)"},"Accessible Podgórze option.":{"pl":"Dostępna opcja na Podgórzu.","ua":"Доступний варіант у Podgórze.","ru":"Доступный вариант в Podgórze."},"Central (Kazimierz / Dietla)":{"pl":"Centralnie (Kazimierz / Dietla)","ua":"Центрально (Kazimierz / Dietla)","ru":"Центрально (Kazimierz / Dietla)"},"Lower threshold tier":{"pl":"Niższy próg","ua":"Нижчий рівень порогу","ru":"Более низкий порог"},"Accessible central option.":{"pl":"Dostępna opcja w centrum.","ua":"Доступний центральний варіант.","ru":"Доступный центральный вариант."},"Accessible west-side option.":{"pl":"Dostępna opcja na zachodzie.","ua":"Доступний варіант на заході.","ru":"Доступный вариант на западе."},"Krowodrza / north location":{"pl":"Lokalizacja Krowodrza / północ","ua":"Розташування Krowodrza / північ","ru":"Расположение Krowodrza / север"},"Open access for mid scores":{"pl":"Otwarty nabór dla średnich wyników","ua":"Відкритий набір для середніх балів","ru":"Открытый набор для средних баллов"},"Accessible Krowodrza option.":{"pl":"Dostępna opcja na Krowodrzy.","ua":"Доступний варіант у Кроводжі.","ru":"Доступный вариант в Кроводже."},"Very wide range incl. open-access classes":{"pl":"Bardzo szeroki zakres, w tym klasy otwarte","ua":"Дуже широкий діапазон, включно з класами відкритого набору","ru":"Очень широкий диапазон, включая классы открытого набора"},"Large spread between classes":{"pl":"Duży rozrzut między klasami","ua":"Великий розкид між класами","ru":"Большой разброс между классами"},"Nowa Huta option with both standard and open-access classes.":{"pl":"Opcja w Nowej Hucie z klasami standardowymi i otwartymi.","ua":"Варіант у Новій Гуті зі стандартними та відкритими класами.","ru":"Вариант в Новой Хуте со стандартными и открытыми классами."},"South / Bieżanów area":{"pl":"Rejon południe / Bieżanów","ua":"Район південь / Bieżanów","ru":"Район юг / Bieżanów"},"Open access for lower scores":{"pl":"Otwarty nabór dla niższych wyników","ua":"Відкритий набір для нижчих балів","ru":"Открытый набор для более низких баллов"},"Open-access option in the south.":{"pl":"Opcja z otwartym naborem na południu.","ua":"Варіант з відкритим набором на півдні.","ru":"Вариант с открытым набором на юге."},"Bieżanów-Prokocim / south":{"pl":"Bieżanów-Prokocim / południe","ua":"Bieżanów-Prokocim / південь","ru":"Bieżanów-Prokocim / юг"},"Open access":{"pl":"Otwarty nabór","ua":"Відкритий набір","ru":"Открытый набор"},"Low threshold tier":{"pl":"Niski próg","ua":"Низький рівень порогу","ru":"Низкий порог"},"Open-access south-side option.":{"pl":"Opcja z otwartym naborem na południu.","ua":"Варіант з відкритим набором на півдні.","ru":"Вариант с открытым набором на юге."},"Podgórze (Kurdwanów) location":{"pl":"Lokalizacja Podgórze (Kurdwanów)","ua":"Розташування Podgórze (Kurdwanów)","ru":"Расположение Podgórze (Kurdwanów)"},"Accessible":{"pl":"Dostępna","ua":"Доступна","ru":"Доступная"},"Single threshold reported (~116)":{"pl":"Zgłoszony jeden próg (~116)","ua":"Повідомлено один поріг (~116)","ru":"Указан один порог (~116)"},"Local Podgórze option.":{"pl":"Lokalna opcja na Podgórzu.","ua":"Місцевий варіант у Podgórze.","ru":"Местный вариант в Podgórze."},"Open-access Nowa Huta option.":{"pl":"Opcja z otwartym naborem w Nowej Hucie.","ua":"Варіант з відкритим набором у Новій Гуті.","ru":"Вариант с открытым набором в Новой Хуте."},"#7 locally in 2025 — very strong for a small school":{"pl":"#7 lokalnie w 2025 — bardzo mocno jak na małą szkołę","ua":"#7 локально у 2025 — дуже сильно як на малу школу","ru":"#7 локально в 2025 — очень сильно для маленькой школы"},"Catholic ethos, small classes, Kazimierz location":{"pl":"Etos katolicki, małe klasy, lokalizacja Kazimierz","ua":"Католицький дух, малі класи, розташування Kazimierz","ru":"Католический дух, малые классы, расположение Kazimierz"},"Own (non-public) recruitment — apply directly":{"pl":"Własna (niepubliczna) rekrutacja — zgłoszenie bezpośrednie","ua":"Власний (непублічний) набір — звертайтеся напряму","ru":"Собственный (непубличный) набор — обращайтесь напрямую"},"Faith-based environment may not suit all families":{"pl":"Środowisko religijne może nie odpowiadać wszystkim rodzinom","ua":"Релігійне середовище може підійти не всім родинам","ru":"Религиозная среда подойдёт не всем семьям"},"Surprisingly high-ranking small Catholic school (local #7, 2025).":{"pl":"Zaskakująco wysoko notowana mała szkoła katolicka (lokalnie #7, 2025).","ua":"Несподівано високо в рейтингу мала католицька школа (локально #7, 2025).","ru":"Неожиданно высоко в рейтинге маленькая католическая школа (локально #7, 2025)."},"Small Catholic liceum; own recruitment":{"pl":"Małe liceum katolickie; własna rekrutacja","ua":"Малий католицький ліцей; власний набір","ru":"Маленький католический лицей; собственный набор"},"#67 nationally (2024), #4 locally (2024)":{"pl":"#67 w kraju (2024), #4 lokalnie (2024)","ua":"#67 у країні (2024), #4 локально (2024)","ru":"#67 в стране (2024), #4 локально (2024)"},"Strong academic tradition, Catholic ethos":{"pl":"Mocna tradycja akademicka, etos katolicki","ua":"Сильна академічна традиція, католицький дух","ru":"Сильная академическая традиция, католический дух"},"Own recruitment / possible fees":{"pl":"Własna rekrutacja / możliwe opłaty","ua":"Власний набір / можливі оплати","ru":"Собственный набор / возможны оплаты"},"Faith-based environment":{"pl":"Środowisko religijne","ua":"Релігійне середовище","ru":"Религиозная среда"},"Long-standing strong Catholic liceum with national-level results.":{"pl":"Od dawna mocne liceum katolickie z wynikami na poziomie krajowym.","ua":"Давно сильний католицький ліцей з результатами національного рівня.","ru":"Давно сильный католический лицей с результатами национального уровня."},"Piarist order school; own recruitment":{"pl":"Szkoła zakonu pijarów; własna rekrutacja","ua":"Школа ордену піярів; власний набір","ru":"Школа ордена пиаров; собственный набор"},"#10 locally (2024), #15 (2025)":{"pl":"#10 lokalnie (2024), #15 (2025)","ua":"#10 локально (2024), #15 (2025)","ru":"#10 локально (2024), #15 (2025)"},"Strong option in the Mistrzejowice / Nowa Huta area":{"pl":"Mocna opcja w rejonie Mistrzejowice / Nowa Huta","ua":"Сильний варіант у районі Mistrzejowice / Нова Гута","ru":"Сильный вариант в районе Mistrzejowice / Нова Хута"},"Own recruitment":{"pl":"Własna rekrutacja","ua":"Власний набір","ru":"Собственный набор"},"Best-regarded Catholic school in the Nowa Huta area.":{"pl":"Najwyżej oceniana szkoła katolicka w rejonie Nowej Huty.","ua":"Найкраще оцінювана католицька школа в районі Нової Гути.","ru":"Наиболее уважаемая католическая школа в районе Новой Хуты."},"Salesian order school; own recruitment":{"pl":"Szkoła salezjańska; własna rekrutacja","ua":"Салезіанська школа; власний набір","ru":"Салезианская школа; собственный набор"},"#20 locally (2025)":{"pl":"#20 lokalnie (2025)","ua":"#20 локально (2025)","ru":"#20 локально (2025)"},"Strong values-based academic environment, Podgórze":{"pl":"Mocne środowisko akademickie oparte na wartościach, Podgórze","ua":"Сильне академічне середовище, засноване на цінностях, Podgórze","ru":"Сильная академическая среда, основанная на ценностях, Podgórze"},"Well-regarded Jesuit liceum in Podgórze.":{"pl":"Cenione liceum jezuickie na Podgórzu.","ua":"Шанований єзуїтський ліцей у Podgórze.","ru":"Уважаемый иезуитский лицей в Podgórze."},"Jesuit order school; own recruitment":{"pl":"Szkoła jezuicka; własna rekrutacja","ua":"Єзуїтська школа; власний набір","ru":"Иезуитская школа; собственный набор"},"Very central (ul. św. Jana)":{"pl":"Bardzo centralnie (ul. św. Jana)","ua":"Дуже центрально (вул. św. Jana)","ru":"Очень центрально (ул. św. Jana)"},"Small classes, Catholic ethos":{"pl":"Małe klasy, etos katolicki","ua":"Малі класи, католицький дух","ru":"Малые классы, католический дух"},"Faith-based; girls-oriented tradition":{"pl":"Religijna; tradycja żeńska","ua":"Релігійна; традиційно для дівчат","ru":"Религиозная; традиционно для девочек"},"Small central Catholic liceum.":{"pl":"Małe katolickie liceum w centrum.","ua":"Малий католицький ліцей у центрі.","ru":"Маленький католический лицей в центре."},"Presentation Sisters school; own recruitment":{"pl":"Szkoła Sióstr Prezentek; własna rekrutacja","ua":"Школа сестер презенток; власний набір","ru":"Школа сестёр презенток; собственный набор"},"Central location (Pędzichów)":{"pl":"Lokalizacja centralna (Pędzichów)","ua":"Центральне розташування (Pędzichów)","ru":"Центральное расположение (Pędzichów)"},"Small Catholic school":{"pl":"Mała szkoła katolicka","ua":"Мала католицька школа","ru":"Маленькая католическая школа"},"Small central Catholic option.":{"pl":"Mała katolicka opcja w centrum.","ua":"Малий католицький варіант у центрі.","ru":"Маленький католический вариант в центре."},"Catholic liceum; own recruitment":{"pl":"Liceum katolickie; własna rekrutacja","ua":"Католицький ліцей; власний набір","ru":"Католический лицей; собственный набор"},"Small Catholic school, supportive environment":{"pl":"Mała szkoła katolicka, wspierające środowisko","ua":"Мала католицька школа, підтримуюче середовище","ru":"Маленькая католическая школа, поддерживающая среда"},"Catholic option in Nowa Huta (Salesian Sisters).":{"pl":"Katolicka opcja w Nowej Hucie (Siostry Salezjanki).","ua":"Католицький варіант у Новій Гуті (Сестри салезіанки).","ru":"Католический вариант в Новой Хуте (Сёстры салезианки)."},"Salesian Sisters school; own recruitment":{"pl":"Szkoła Sióstr Salezjanek; własna rekrutacja","ua":"Школа сестер салезіанок; власний набір","ru":"Школа сестёр салезианок; собственный набор"},"Nowa Huta (Wzgórza Krzesławickie)":{"pl":"Nowa Huta (Wzgórza Krzesławickie)","ua":"Нова Гута (Wzgórza Krzesławickie)","ru":"Нова Хута (Wzgórza Krzesławickie)"},"Small Catholic liceum in eastern Krakow.":{"pl":"Małe katolickie liceum we wschodnim Krakowie.","ua":"Малий католицький ліцей у східному Кракові.","ru":"Маленький католический лицей в восточном Кракове."},"Catholic (Pallottine) school; own recruitment":{"pl":"Szkoła katolicka (pallotyni); własna rekrutacja","ua":"Католицька (паллотинська) школа; власний набір","ru":"Католическая (паллотинская) школа; собственный набор"},"#7 locally (2024), #11 (2025); ~#100 nationally":{"pl":"#7 lokalnie (2024), #11 (2025); ~#100 w kraju","ua":"#7 локально (2024), #11 (2025); ~#100 у країні","ru":"#7 локально (2024), #11 (2025); ~#100 в стране"},"Has IB programme; small classes, central location":{"pl":"Ma program IB; małe klasy, centralna lokalizacja","ua":"Має програму IB; малі класи, центральне розташування","ru":"Есть программа IB; малые классы, центральное расположение"},"Fee-paying private school":{"pl":"Płatna szkoła prywatna","ua":"Платна приватна школа","ru":"Платная частная школа"},"Strong fee-paying academic school with an IB track.":{"pl":"Mocna, płatna szkoła akademicka ze ścieżką IB.","ua":"Сильна платна академічна школа з напрямком IB.","ru":"Сильная платная академическая школа с направлением IB."},"Private academic liceum with IB Diploma track":{"pl":"Prywatne liceum akademickie ze ścieżką IB Diploma","ua":"Приватний академічний ліцей із напрямком IB Diploma","ru":"Частный академический лицей с направлением IB Diploma"},"#19 locally (2025)":{"pl":"#19 lokalnie (2025)","ua":"#19 локально (2025)","ru":"#19 локально (2025)"},"Small classes, central (Stradom)":{"pl":"Małe klasy, centralnie (Stradom)","ua":"Малі класи, центрально (Stradom)","ru":"Малые классы, центрально (Stradom)"},"Fee-paying social school":{"pl":"Płatna szkoła społeczna","ua":"Платна суспільна школа","ru":"Платная общественная школа"},"Well-regarded small social liceum in the centre.":{"pl":"Cenione małe liceum społeczne w centrum.","ua":"Шанований малий суспільний ліцей у центрі.","ru":"Уважаемый маленький общественный лицей в центре."},"Social (STO) school; small classes; own recruitment":{"pl":"Szkoła społeczna (STO); małe klasy; własna rekrutacja","ua":"Суспільна школа (STO); малі класи; власний набір","ru":"Общественная школа (STO); малые классы; собственный набор"},"Central location, small classes":{"pl":"Lokalizacja centralna, małe klasy","ua":"Центральне розташування, малі класи","ru":"Центральное расположение, малые классы"},"Long-running social school":{"pl":"Działająca od dawna szkoła społeczna","ua":"Давно діюча суспільна школа","ru":"Давно работающая общественная школа"},"Fee-paying":{"pl":"Płatna","ua":"Платна","ru":"Платная"},"Established small social liceum in the centre.":{"pl":"Ugruntowane małe liceum społeczne w centrum.","ua":"Усталений малий суспільний ліцей у центрі.","ru":"Устоявшийся маленький общественный лицей в центре."},"Small private school":{"pl":"Mała szkoła prywatna","ua":"Мала приватна школа","ru":"Маленькая частная школа"},"South (Prokocim) location":{"pl":"Lokalizacja południe (Prokocim)","ua":"Розташування південь (Prokocim)","ru":"Расположение юг (Prokocim)"},"Limited public data":{"pl":"Ograniczone dane publiczne","ua":"Обмежені публічні дані","ru":"Ограниченные публичные данные"},"Small private option in the south.":{"pl":"Mała prywatna opcja na południu.","ua":"Малий приватний варіант на півдні.","ru":"Маленький частный вариант на юге."},"Private liceum; own recruitment":{"pl":"Liceum prywatne; własna rekrutacja","ua":"Приватний ліцей; власний набір","ru":"Частный лицей; собственный набор"},"Very central (Sławkowska)":{"pl":"Bardzo centralnie (Sławkowska)","ua":"Дуже центрально (Sławkowska)","ru":"Очень центрально (Sławkowska)"},"Small central private option.":{"pl":"Mała prywatna opcja w centrum.","ua":"Малий приватний варіант у центрі.","ru":"Маленький частный вариант в центре."},"Central (Basztowa)":{"pl":"Centralnie (Basztowa)","ua":"Центрально (Basztowa)","ru":"Центрально (Basztowa)"},"Central (Smoleńsk)":{"pl":"Centralnie (Smoleńsk)","ua":"Центрально (Smoleńsk)","ru":"Центрально (Smoleńsk)"},"Small classes":{"pl":"Małe klasy","ua":"Малі класи","ru":"Малые классы"},"Central (Kazimierz)":{"pl":"Centralnie (Kazimierz)","ua":"Центрально (Kazimierz)","ru":"Центрально (Kazimierz)"},"Central (Kazimierz/Wietora)":{"pl":"Centralnie (Kazimierz/Wietora)","ua":"Центрально (Kazimierz/Wietora)","ru":"Центрально (Kazimierz/Wietora)"},"Not to be confused with public II LO Sobieski":{"pl":"Nie mylić z publicznym II LO Sobieskiego","ua":"Не плутати з державним II LO Sobieski","ru":"Не путать с государственным II LO Sobieski"},"Small private school (separate from the public Sobieski).":{"pl":"Mała szkoła prywatna (odrębna od publicznego Sobieskiego).","ua":"Мала приватна школа (окрема від державного Sobieski).","ru":"Маленькая частная школа (отдельная от государственного Sobieski)."},"Private liceum; own recruitment (distinct from public II LO Sobieski)":{"pl":"Liceum prywatne; własna rekrutacja (odrębne od publicznego II LO Sobieskiego)","ua":"Приватний ліцей; власний набір (окремий від державного II LO Sobieski)","ru":"Частный лицей; собственный набор (отдельный от государственного II LO Sobieski)"},"Bilingual programme":{"pl":"Program dwujęzyczny","ua":"Двомовна програма","ru":"Двуязычная программа"},"Krowodrza / Prądnik Biały location":{"pl":"Lokalizacja Krowodrza / Prądnik Biały","ua":"Розташування Krowodrza / Prądnik Biały","ru":"Расположение Krowodrza / Prądnik Biały"},"Verify language/exam requirements":{"pl":"Sprawdź wymagania językowe/egzaminacyjne","ua":"Перевірте мовні/екзаменаційні вимоги","ru":"Проверьте языковые/экзаменационные требования"},"Bilingual private school in the north-west.":{"pl":"Dwujęzyczna szkoła prywatna na północnym zachodzie.","ua":"Двомовна приватна школа на північному заході.","ru":"Двуязычная частная школа на северо-западе."},"Bilingual classes (Polish-English); own recruitment":{"pl":"Klasy dwujęzyczne (polsko-angielskie); własna rekrutacja","ua":"Двомовні класи (польсько-англійські); власний набір","ru":"Двуязычные классы (польско-английские); собственный набор"},"Bilingual programme, central location":{"pl":"Program dwujęzyczny, centralna lokalizacja","ua":"Двомовна програма, центральне розташування","ru":"Двуязычная программа, центральное расположение"},"Verify language entry requirements":{"pl":"Sprawdź wymagania językowe przy przyjęciu","ua":"Перевірте мовні вимоги при вступі","ru":"Проверьте языковые требования при поступлении"},"Central bilingual private school.":{"pl":"Centralna dwujęzyczna szkoła prywatna.","ua":"Центральна двомовна приватна школа.","ru":"Центральная двуязычная частная школа."},"Bilingual classes; own recruitment":{"pl":"Klasy dwujęzyczne; własna rekrutacja","ua":"Двомовні класи; власний набір","ru":"Двуязычные классы; собственный набор"},"International, English-medium programme":{"pl":"Międzynarodowy program z językiem angielskim jako wykładowym","ua":"Міжнародна програма з англійською мовою викладання","ru":"Международная программа с английским языком обучения"},"Best for expat / internationally-mobile families":{"pl":"Najlepsza dla rodzin ekspatów / mobilnych międzynarodowo","ua":"Найкраща для родин експатів / міжнародно мобільних","ru":"Лучшая для семей экспатов / международно мобильных"},"Fee-paying (premium)":{"pl":"Płatna (premium)","ua":"Платна (преміум)","ru":"Платная (премиум)"},"English proficiency required":{"pl":"Wymagana biegłość w języku angielskim","ua":"Потрібне вільне володіння англійською","ru":"Требуется свободное владение английским"},"International school option for families targeting study abroad.":{"pl":"Opcja szkoły międzynarodowej dla rodzin celujących w studia za granicą.","ua":"Варіант міжнародної школи для родин, орієнтованих на навчання за кордоном.","ru":"Вариант международной школы для семей, ориентированных на учёбу за рубежом."},"English-medium international curriculum (IB-oriented); own recruitment":{"pl":"Międzynarodowy program w języku angielskim (ukierunkowany na IB); własna rekrutacja","ua":"Міжнародна програма англійською (орієнтована на IB); власний набір","ru":"Международная программа на английском (ориентирована на IB); собственный набор"},"Bilingual / international focus":{"pl":"Profil dwujęzyczny / międzynarodowy","ua":"Двомовний / міжнародний профіль","ru":"Двуязычный / международный профиль"},"English-immersive environment":{"pl":"Środowisko z zanurzeniem w języku angielskim","ua":"Середовище занурення в англійську","ru":"Среда погружения в английский"},"Verify IB authorization / entry requirements":{"pl":"Sprawdź autoryzację IB / wymagania przyjęcia","ua":"Перевірте авторизацію IB / вимоги до вступу","ru":"Проверьте авторизацию IB / требования к поступлению"},"Bilingual international-style private school in Podgórze.":{"pl":"Dwujęzyczna szkoła prywatna w stylu międzynarodowym na Podgórzu.","ua":"Двомовна приватна школа міжнародного типу в Podgórze.","ru":"Двуязычная частная школа международного типа в Podgórze."},"Bilingual English programme; own recruitment (verify IB status)":{"pl":"Dwujęzyczny program angielski; własna rekrutacja (sprawdź status IB)","ua":"Двомовна англійська програма; власний набір (перевірте статус IB)","ru":"Двуязычная английская программа; собственный набор (проверьте статус IB)"},"Bilingual English programme":{"pl":"Dwujęzyczny program angielski","ua":"Двомовна англійська програма","ru":"Двуязычная английская программа"},"Verify entry requirements":{"pl":"Sprawdź wymagania przyjęcia","ua":"Перевірте вимоги до вступу","ru":"Проверьте требования к поступлению"},"Bilingual private school.":{"pl":"Dwujęzyczna szkoła prywatna.","ua":"Двомовна приватна школа.","ru":"Двуязычная частная школа."},"Bilingual English programme; own recruitment":{"pl":"Dwujęzyczny program angielski; własna rekrutacja","ua":"Двомовна англійська програма; власний набір","ru":"Двуязычная английская программа; собственный набор"},"Values-based, single-sex education model":{"pl":"Model edukacji oparty na wartościach, jednopłciowy","ua":"Модель освіти на основі цінностей, роздільна за статтю","ru":"Модель образования на основе ценностей, раздельная по полу"},"North-west (Prądnik Biały)":{"pl":"Północny zachód (Prądnik Biały)","ua":"Північний захід (Prądnik Biały)","ru":"Северо-запад (Prądnik Biały)"},"Single-sex model may not suit all":{"pl":"Model jednopłciowy może nie odpowiadać wszystkim","ua":"Роздільна за статтю модель може підійти не всім","ru":"Раздельная по полу модель подойдёт не всем"},"Private school with a single-sex, values-based model.":{"pl":"Szkoła prywatna z modelem jednopłciowym opartym na wartościach.","ua":"Приватна школа з роздільною за статтю моделлю на основі цінностей.","ru":"Частная школа с раздельной по полу моделью на основе ценностей."},"Single-sex education model; own recruitment":{"pl":"Model edukacji jednopłciowej; własna rekrutacja","ua":"Роздільна за статтю модель освіти; власний набір","ru":"Раздельная по полу модель образования; собственный набор"},"Montessori pedagogy":{"pl":"Pedagogika Montessori","ua":"Педагогіка Монтессорі","ru":"Педагогика Монтессори"},"Small, individualised classes":{"pl":"Małe, zindywidualizowane klasy","ua":"Малі, індивідуалізовані класи","ru":"Малые, индивидуализированные классы"},"Niche pedagogy / faith-based":{"pl":"Niszowa pedagogika / religijna","ua":"Нішева педагогіка / релігійна","ru":"Нишевая педагогика / религиозная"},"Niche Montessori Catholic liceum.":{"pl":"Niszowe katolickie liceum Montessori.","ua":"Нішевий католицький ліцей Монтессорі.","ru":"Нишевый католический лицей Монтессори."},"Montessori pedagogy, Catholic ethos; own recruitment":{"pl":"Pedagogika Montessori, etos katolicki; własna rekrutacja","ua":"Педагогіка Монтессорі, католицький дух; власний набір","ru":"Педагогика Монтессори, католический дух; собственный набор"},"Podgórze (Zabłocie) location":{"pl":"Lokalizacja Podgórze (Zabłocie)","ua":"Розташування Podgórze (Zabłocie)","ru":"Расположение Podgórze (Zabłocie)"},"Small private liceum in Zabłocie.":{"pl":"Małe liceum prywatne na Zabłociu.","ua":"Малий приватний ліцей у Zabłocie.","ru":"Маленький частный лицей в Zabłocie."},"Small private option in Nowa Huta.":{"pl":"Mała prywatna opcja w Nowej Hucie.","ua":"Малий приватний варіант у Новій Гуті.","ru":"Маленький частный вариант в Новой Хуте."},"Small social school":{"pl":"Mała szkoła społeczna","ua":"Мала суспільна школа","ru":"Маленькая общественная школа"},"Small social liceum in Nowa Huta.":{"pl":"Małe liceum społeczne w Nowej Hucie.","ua":"Малий суспільний ліцей у Новій Гуті.","ru":"Маленький общественный лицей в Новой Хуте."},"Social school; own recruitment":{"pl":"Szkoła społeczna; własna rekrutacja","ua":"Суспільна школа; власний набір","ru":"Общественная школа; собственный набор"},"Small Christian school":{"pl":"Mała szkoła chrześcijańska","ua":"Мала християнська школа","ru":"Маленькая христианская школа"},"Krowodrza (near AGH/Bronowice)":{"pl":"Krowodrza (blisko AGH/Bronowic)","ua":"Krowodrza (біля AGH/Bronowice)","ru":"Krowodrza (рядом с AGH/Bronowice)"},"Small Christian private liceum.":{"pl":"Małe chrześcijańskie liceum prywatne.","ua":"Малий християнський приватний ліцей.","ru":"Маленький христианский частный лицей."},"Christian school; own recruitment":{"pl":"Szkoła chrześcijańska; własna rekrutacja","ua":"Християнська школа; власний набір","ru":"Христианская школа; собственный набор"},"Alternative / democratic pedagogy":{"pl":"Pedagogika alternatywna / demokratyczna","ua":"Альтернативна / демократична педагогіка","ru":"Альтернативная / демократическая педагогика"},"Individualised approach":{"pl":"Indywidualne podejście","ua":"Індивідуальний підхід","ru":"Индивидуальный подход"},"Non-traditional model — not for everyone":{"pl":"Model nietradycyjny — nie dla każdego","ua":"Нетрадиційна модель — не для всіх","ru":"Нетрадиционная модель — не для всех"},"Alternative 'free school' model for families seeking that approach.":{"pl":"Model alternatywnej „wolnej szkoły” dla rodzin szukających takiego podejścia.","ua":"Модель альтернативної «вільної школи» для родин, які шукають такий підхід.","ru":"Модель альтернативной «свободной школы» для семей, ищущих такой подход."},"Alternative ('free school') pedagogy; own recruitment":{"pl":"Pedagogika alternatywna („wolna szkoła”); własna rekrutacja","ua":"Альтернативна («вільна школа») педагогіка; власний набір","ru":"Альтернативная («свободная школа») педагогика; собственный набор"},"For competitive athletes (sports-mastery track)":{"pl":"Dla zawodników wyczynowych (klasa mistrzostwa sportowego)","ua":"Для спортсменів-змагальників (клас спортивної майстерності)","ru":"Для спортсменов-соревнователей (класс спортивного мастерства)"},"Public — no tuition":{"pl":"Publiczna — bez czesnego","ua":"Державна — без оплати за навчання","ru":"Государственная — без платы за обучение"},"Sport trial is decisive, not academic score":{"pl":"Decyduje próba sportowa, nie wynik akademicki","ua":"Вирішує спортивне випробування, а не академічний бал","ru":"Решает спортивное испытание, а не академический балл"},"Not an academic-track choice":{"pl":"Nie jest to wybór dla ścieżki akademickiej","ua":"Не варіант для академічного напрямку","ru":"Не вариант для академического направления"},"For competitive athletes only — admission via sport trial.":{"pl":"Tylko dla zawodników wyczynowych — przyjęcie przez próbę sportową.","ua":"Лише для спортсменів-змагальників — вступ через спортивне випробування.","ru":"Только для спортсменов-соревнователей — приём через спортивное испытание."},"Multiple sport disciplines; admission via sport trial + points":{"pl":"Wiele dyscyplin sportowych; przyjęcie przez próbę sportową + punkty","ua":"Багато спортивних дисциплін; вступ через спортивне випробування + бали","ru":"Множество спортивных дисциплин; приём через спортивное испытание + баллы"},"Sports-mastery programme":{"pl":"Program mistrzostwa sportowego","ua":"Програма спортивної майстерності","ru":"Программа спортивного мастерства"},"Krowodrza location":{"pl":"Lokalizacja Krowodrza","ua":"Розташування Krowodrza","ru":"Расположение Krowodrza"},"For competitive athletes only":{"pl":"Tylko dla zawodników wyczynowych","ua":"Лише для спортсменів-змагальників","ru":"Только для спортсменов-соревнователей"},"Private sports-mastery school for competitive athletes.":{"pl":"Prywatna szkoła mistrzostwa sportowego dla zawodników wyczynowych.","ua":"Приватна школа спортивної майстерності для спортсменів-змагальників.","ru":"Частная школа спортивного мастерства для спортсменов-соревнователей."},"Sport-focused; own recruitment + sport trial":{"pl":"Ukierunkowana na sport; własna rekrutacja + próba sportowa","ua":"Спортивна спрямованість; власний набір + спортивне випробування","ru":"Спортивная направленность; собственный набор + спортивное испытание"},"Social sports-mastery school for competitive athletes.":{"pl":"Społeczna szkoła mistrzostwa sportowego dla zawodników wyczynowych.","ua":"Суспільна школа спортивної майстерності для спортсменів-змагальників.","ru":"Общественная школа спортивного мастерства для спортсменов-соревнователей."},"Basketball-focused sports-mastery school":{"pl":"Szkoła mistrzostwa sportowego ukierunkowana na koszykówkę","ua":"Школа спортивної майстерності з акцентом на баскетбол","ru":"Школа спортивного мастерства с акцентом на баскетбол"},"Basketball sports-mastery school (Gortat) for competitive athletes.":{"pl":"Szkoła mistrzostwa sportowego (Gortat) — koszykówka, dla zawodników wyczynowych.","ua":"Школа спортивної майстерності (Gortat) — баскетбол, для спортсменів-змагальників.","ru":"Школа спортивного мастерства (Gortat) — баскетбол, для спортсменов-соревнователей."},"Basketball-focused sports-mastery school; own recruitment":{"pl":"Szkoła mistrzostwa sportowego — koszykówka; własna rekrutacja","ua":"Школа спортивної майстерності — баскетбол; власний набір","ru":"Школа спортивного мастерства — баскетбол; собственный набор"},"Football-focused programme":{"pl":"Program ukierunkowany na piłkę nożną","ua":"Програма з акцентом на футбол","ru":"Программа с акцентом на футбол"},"For competitive footballers only":{"pl":"Tylko dla wyczynowych piłkarzy","ua":"Лише для футболістів-змагальників","ru":"Только для футболистов-соревнователей"},"Football sports school for competitive players.":{"pl":"Szkoła sportowa piłki nożnej dla wyczynowych graczy.","ua":"Спортивна футбольна школа для гравців-змагальників.","ru":"Спортивная футбольная школа для игроков-соревнователей."},"Football-focused sports school; own recruitment":{"pl":"Szkoła sportowa ukierunkowana na piłkę nożną; własna rekrutacja","ua":"Спортивна школа з акцентом на футбол; власний набір","ru":"Спортивная школа с акцентом на футбол; собственный набор"},"#17 locally (2025) — strong matura results":{"pl":"#17 lokalnie (2025) — mocne wyniki matur","ua":"#17 локально (2025) — сильні результати матури","ru":"#17 локально (2025) — сильные результаты матуры"},"Combines full academic liceum with music education":{"pl":"Łączy pełne liceum akademickie z edukacją muzyczną","ua":"Поєднує повний академічний ліцей з музичною освітою","ru":"Сочетает полный академический лицей с музыкальным образованием"},"Requires music training / aptitude exam":{"pl":"Wymaga przygotowania muzycznego / egzaminu predyspozycji","ua":"Потрібна музична підготовка / іспит на здібності","ru":"Требуется музыкальная подготовка / экзамен на способности"},"Heavy combined workload (music + academics)":{"pl":"Duże łączne obciążenie (muzyka + przedmioty akademickie)","ua":"Велике сукупне навантаження (музика + академічні предмети)","ru":"Большая совокупная нагрузка (музыка + академические предметы)"},"For musically talented students wanting academics + music together.":{"pl":"Dla uczniów uzdolnionych muzycznie, chcących łączyć naukę i muzykę.","ua":"Для музично обдарованих учнів, які хочуть поєднувати навчання та музику.","ru":"Для музыкально одарённых учеников, желающих сочетать учёбу и музыку."},"Combined music + academic curriculum; admission via music aptitude exam":{"pl":"Połączony program muzyczny + akademicki; przyjęcie przez egzamin predyspozycji muzycznych","ua":"Поєднана музична + академічна програма; вступ через іспит музичних здібностей","ru":"Совмещённая музыкальная + академическая программа; приём через экзамен музыкальных способностей"},"State music school + full academics":{"pl":"Państwowa szkoła muzyczna + pełny program akademicki","ua":"Державна музична школа + повна академічна програма","ru":"Государственная музыкальная школа + полная академическая программа"},"Heavy combined workload":{"pl":"Duże łączne obciążenie","ua":"Велике сукупне навантаження","ru":"Большая совокупная нагрузка"},"State music school combining academics with conservatory training.":{"pl":"Państwowa szkoła muzyczna łącząca naukę akademicką z kształceniem konserwatoryjnym.","ua":"Державна музична школа, що поєднує академічне навчання з консерваторською підготовкою.","ru":"Государственная музыкальная школа, сочетающая академическое обучение с консерваторской подготовкой."},"State music school with general curriculum; music aptitude exam":{"pl":"Państwowa szkoła muzyczna z programem ogólnym; egzamin predyspozycji muzycznych","ua":"Державна музична школа із загальною програмою; іспит музичних здібностей","ru":"Государственная музыкальная школа с общей программой; экзамен музыкальных способностей"},"Fine-arts education with full matura":{"pl":"Kształcenie plastyczne z pełną maturą","ua":"Художня освіта з повною матурою","ru":"Художественное образование с полной матурой"},"For artistically talented students":{"pl":"Dla uczniów uzdolnionych plastycznie","ua":"Для художньо обдарованих учнів","ru":"Для художественно одарённых учеников"},"Requires art portfolio / aptitude exam":{"pl":"Wymaga portfolio plastycznego / egzaminu predyspozycji","ua":"Потрібне художнє портфоліо / іспит на здібності","ru":"Требуется художественное портфолио / экзамен на способности"},"Specialised — art-focused path":{"pl":"Wyspecjalizowana — ścieżka plastyczna","ua":"Спеціалізована — художній напрямок","ru":"Специализированная — художественное направление"},"For artistically talented students wanting a fine-arts secondary path.":{"pl":"Dla uczniów uzdolnionych plastycznie, chcących iść ścieżką plastyczną w szkole średniej.","ua":"Для художньо обдарованих учнів, які хочуть художній напрямок у середній школі.","ru":"Для художественно одарённых учеников, желающих художественное направление в средней школе."},"Fine-arts curriculum + general academics; admission via art portfolio/exam":{"pl":"Program plastyczny + przedmioty ogólne; przyjęcie przez portfolio/egzamin plastyczny","ua":"Художня програма + загальні предмети; вступ через портфоліо/іспит з мистецтва","ru":"Художественная программа + общие предметы; приём через портфолио/экзамен по искусству"}};
+
+function tr(str) {
+  if (currentLang === 'en' || str == null) return str;
+  const e = phraseTranslations[str];
+  return (e && e[currentLang]) ? e[currentLang] : str;
+}
+
+function gl(s, field) {
+  if (s._t && s._t[currentLang] && s._t[currentLang][field] !== undefined) return s._t[currentLang][field];
+  if (currentLang === 'en') return s[field];
+  const v = s[field];
+  return Array.isArray(v) ? v.map(tr) : tr(v);
+}
+
+function getProfileSubject(s, i) {
+  if (s._t && s._t[currentLang] && s._t[currentLang].profileSubjects) return s._t[currentLang].profileSubjects[i] || s.profiles[i].subjects;
+  return tr(s.profiles[i].subjects);
+}
+
+function getDistLabelCard(s) {
+  const dl = i18n[currentLang] && i18n[currentLang].distLabel;
+  return (dl && dl[s.district]) || s.districtLabel || s.district;
+}
+
+function getScoreBarWidth(min, max) {
+  if (!min) return 0;
+  return Math.round(((max - 80) / (200 - 80)) * 100);
+}
+
+function createCard(s) {
+  const tierClass = `tier-${s.tier}`;
+  const recLabel = s.top10 === 1 ? t('rec1') : s.top10 === 2 ? t('rec2') : s.top10 === 3 ? t('rec3') : s.top10 ? t('recOther').replace('N', s.top10) : null;
+  const recBadgeClass = s.top10 === 1 ? "rec-1" : s.top10 === 2 ? "rec-2" : s.top10 === 3 ? "rec-3" : "rec-other";
+  const ibBadge = s.hasIB ? `<span class="badge badge-ib">🌍 IB</span>` : "";
+  const typeBadge = s.type === "private" ? `<span class="badge badge-private">${t('badge_private')}</span>` : s.type === "religious" ? `<span class="badge" style="background:#e8f5e9;color:#1b5e20">${t('badge_catholic')}</span>` : "";
+  const sportBadge = s.tier === "sport" ? `<span class="badge badge-sport">Sport</span>` : "";
+  const rankBadge = s.rank_national ? `<span class="badge badge-rank">${s.rank_national}</span>` : "";
+
+  const thresholdDisplay = s.threshold_min ? `${s.threshold_min}–${s.threshold_max} ${t('pts')}` : (s.tier === 'sport' ? t('sportTest') : t('ownRecruitment'));
+  const barWidth = s.threshold_min ? getScoreBarWidth(s.threshold_min, s.threshold_max) : 0;
+
+  const profilesHtml = s.profiles.map((p, i) =>
+    `<div class="profile-item">
+      <span class="profile-name">${p.name}</span>
+      <span class="profile-subjects">${getProfileSubject(s, i)}</span>
+    </div>`
+  ).join('');
+
+  const pros = gl(s, 'pros');
+  const cons = gl(s, 'cons');
+  const verdict = gl(s, 'verdict');
+
+  const prosHtml = pros.map(p => `<li>${p}</li>`).join('');
+  const consHtml = cons.map(c => `<li>${c}</li>`).join('');
+
+  const sentimentBlock = (s.sentiment && s.sentiment !== "unrated") ? `<span class="sentiment sentiment-${s.sentiment}">${t('sentiment_' + s.sentiment)}</span>` : '';
+
+  const matura = s.matura_pass !== "—" ? `
+    <div class="info-row"><span class="info-label">${t('cardMatura')}</span><span class="info-val">${s.matura_pass}</span></div>
+    <div class="info-row"><span class="info-label">${t('cardMathAvg')}</span><span class="info-val">${s.math_avg}</span></div>
+    <div class="info-row"><span class="info-label">${t('cardEngAvg')}</span><span class="info-val">${s.eng_avg}</span></div>
+  ` : '';
+
+  const websiteLink = s.website ? `<a href="${s.website}" target="_blank">${t('officialSite')}</a>` : `<span style="color:#aaa">${t('noSite')}</span>`;
+
+  return `<div class="card" data-id="${s.id}" data-specs="${s.specs.join(',')}" data-district="${s.district}" data-type="${s.type}" data-ib="${s.hasIB}" data-top10="${s.top10 || 0}" data-threshold="${s.threshold_max || 999}">
+    <div class="card-header ${tierClass}">
+      <div class="school-name">${s.name}</div>
+      <div class="school-sub">${s.address} &nbsp;&middot;&nbsp; ${getDistLabelCard(s)}</div>
+      <div class="badges">${rankBadge}${ibBadge}${typeBadge}${sportBadge}</div>
+    </div>
+    <div class="card-body">
+      <div class="info-row"><span class="info-label">${t('cardThreshold')}</span><span class="info-val">${thresholdDisplay}</span></div>
+      <div class="info-row"><span class="info-label">${t('cardLocalRank')}</span><span class="info-val">#${s.rank2024_local || '—'} / #${s.rank2025_local || '—'}</span></div>
+      ${matura}
+      <div class="score-bar-wrap">
+        <div class="score-bar-label"><span>${t('minPts')}</span><span>${t('maxPts')}</span></div>
+        <div class="score-bar ${tierClass}"><div class="score-bar-fill" style="width:${barWidth}%"></div></div>
+      </div>
+      <details class="profiles-section">
+        <summary>&#9658; ${t('classProfiles')} (${s.profiles.length})</summary>
+        <div class="profile-list">${profilesHtml}</div>
+      </details>
+      <div class="pros-cons">
+        <div class="pros"><strong>${t('pros')}</strong><ul>${prosHtml}</ul></div>
+        <div class="cons"><strong>${t('cons')}</strong><ul>${consHtml}</ul></div>
+      </div>
+      <div style="margin-top:8px; padding: 8px; background:#f8f9ff; border-radius:6px; font-size:0.83rem; color:#333; font-style:italic;">${verdict}</div>
+      ${sentimentBlock}
+    </div>
+    <div class="card-footer">
+      ${websiteLink}
+      ${recLabel ? `<span class="rec-badge ${recBadgeClass}">${recLabel}</span>` : ''}
+    </div>
+  </div>`;
+}
+
+function norm(str) {
+  return (str || '').toString().toLowerCase()
+    .normalize('NFD').replace(/[̀-ͯ]/g, '')
+    .replace(/ł/g, 'l')
+    .replace(/[^a-z0-9Ѐ-ӿ ]+/g, ' ')
+    .replace(/\s+/g, ' ').trim();
+}
+function romanLead(name) {
+  const tok = (name || '').split(/\s+/)[0].toUpperCase();
+  if (!/^[IVXLCDM]+$/.test(tok)) return '';
+  const m = { I:1, V:5, X:10, L:50, C:100, D:500, M:1000 };
+  let n = 0, prev = 0;
+  for (let i = tok.length - 1; i >= 0; i--) { const v = m[tok[i]]; if (v < prev) n -= v; else { n += v; prev = v; } }
+  return n > 0 ? String(n) : '';
+}
+function schoolSearchKey(s) {
+  return norm(s.name + ' ' + (s.shortName || '') + ' ' + romanLead(s.name));
+}
+
+function renderCards() {
+  const grid = document.getElementById('card-grid');
+  grid.innerHTML = schools.map(s => createCard(s)).join('');
+  applyFilters();
+}
+
+function applyFilters() {
+  const selectedSpecs = [...document.querySelectorAll('.filter-spec:checked')].map(c => c.value);
+  const selectedDistricts = [...document.querySelectorAll('.filter-district:checked')].map(c => c.value);
+  const selectedTypes = [...document.querySelectorAll('.filter-type:checked')].map(c => c.value);
+  const maxScore = parseInt(document.getElementById('score-slider').value);
+  const onlyTop10 = document.getElementById('filter-top10').checked;
+  const onlyIB = document.getElementById('filter-ib').checked;
+
+  let visible = 0;
+  document.querySelectorAll('.card').forEach(card => {
+    const specs = card.dataset.specs.split(',');
+    const district = card.dataset.district;
+    const type = card.dataset.type;
+    const ib = card.dataset.ib === 'true';
+    const top10 = parseInt(card.dataset.top10);
+    const threshold = parseInt(card.dataset.threshold);
+
+    const specMatch = selectedSpecs.some(s => specs.includes(s));
+    const districtMatch = selectedDistricts.includes(district);
+    const typeMatch = selectedTypes.includes(type);
+    const scoreMatch = threshold <= maxScore || threshold === 999;
+    const top10Match = !onlyTop10 || top10 > 0;
+    const ibMatch = !onlyIB || ib;
+
+    if (specMatch && districtMatch && typeMatch && scoreMatch && top10Match && ibMatch) {
+      card.classList.remove('hidden');
+      visible++;
+    } else {
+      card.classList.add('hidden');
+    }
+  });
+
+  document.getElementById('count').textContent = visible;
+  document.getElementById('no-results').classList.toggle('hidden', visible > 0);
+}
+
+function resetFilters() {
+  document.querySelectorAll('.filter-spec, .filter-district, .filter-type').forEach(c => c.checked = true);
+  document.getElementById('score-slider').value = 190;
+  document.getElementById('score-display').textContent = t('scoreAny');
+  document.getElementById('filter-top10').checked = false;
+  document.getElementById('filter-ib').checked = false;
+  applyFilters();
+}
+
+function applyTranslations() {
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    el.textContent = t(el.dataset.i18n);
+  });
+}
+
+function updateScoreDisplay() {
+  const v = document.getElementById('score-slider').value;
+  document.getElementById('score-display').textContent = v == 190 ? t('scoreAny') : `≤ ${v} ${t('pts')}`;
+}
+
+function setLanguage(lang) {
+  currentLang = lang;
+  localStorage.setItem('kl_lang', lang);
+  document.documentElement.lang = lang === 'ua' ? 'uk' : lang;
+  document.title = t('pageTitle');
+  document.getElementById('hdr-title').textContent = t('title');
+  document.getElementById('hdr-sub').textContent = t('subtitle');
+  document.querySelectorAll('.lang-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.lang === lang);
+  });
+  applyTranslations();
+  updateScoreDisplay();
+  renderCards();
+}
+
+document.getElementById('score-slider').addEventListener('input', function() {
+  updateScoreDisplay();
+  applyFilters();
+});
+
+document.querySelectorAll('input[type="checkbox"]').forEach(c => c.addEventListener('change', applyFilters));
+
+setLanguage(currentLang);
+</script>
+</body>
+</html>
